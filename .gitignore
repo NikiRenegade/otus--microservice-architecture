@@ -1,0 +1,48 @@
+# Build Folders
+bin/
+obj/
+publish/
+
+# Rider / JetBrains
+.idea/
+*.sln.iml
+
+# Visual Studio
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Visual Studio Code
+.vscode/
+
+# NuGet Packages
+*.nupkg
+packages/
+.nuget/
+
+# ASP.NET temporary files
+*.db
+*.log
+*.vspscc
+
+# OS generated files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Docker related
+docker-compose.override.yml
+*.dockerfile.override
+
+# Others
+*.pdb
+*.cache
+*.mdb
+*.pidb
+*.sdf
+*.dbmdl
+*.bak
+*.backup
+*.swp
