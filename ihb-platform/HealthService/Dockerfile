@@ -1,5 +1,9 @@
 ﻿FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS base
-USER $APP_UID
+
+RUN groupadd -g 1000 appgroup \
+    && useradd -m -u 1000 -g 1000 appuser
+
+USER appuser
 WORKDIR /app
 EXPOSE 8000
 ENV ASPNETCORE_URLS=http://+:8000
