@@ -3,6 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HealthService", "HealthService\HealthService.csproj", "{7B36C655-3D03-4B5E-AD7E-C885D8915CB2}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UserService", "UserService", "{C0127DB6-3CA8-EE98-7726-A4993E48C5D4}"
+	ProjectSection(SolutionItems) = preProject
+		UserService\README.md = UserService\README.md
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Application", "Application", "{8B96468D-1D8F-F42C-605E-9122E8FB1888}"
 EndProject
