@@ -13,7 +13,7 @@ public interface IUserService
 
     Task<UserDto> AddAsync(UserRegisterDto dto);
 
-    Task<bool> UpdateAsync(UserUpdateDto dto);
+    Task<bool> UpdateAsync(Guid id,UserUpdateDto dto);
 
     Task<bool> DeleteAsync(Guid id);
 }

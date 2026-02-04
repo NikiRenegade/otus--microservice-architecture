@@ -91,7 +91,7 @@ public class UserController: ControllerBase
         try
         {
 
-            var updated = await _userService.UpdateAsync(request);
+            var updated = await _userService.UpdateAsync(id, request);
             if (!updated)
             {
                 return NotFound(new { message = $"Пользователь с данным Id = {id} не найден" });

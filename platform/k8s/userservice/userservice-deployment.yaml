@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: userservice
-          image: nikirenegade/ihb-userservice:1.0.0-api
+          image: nikirenegade/ihb-userservice:1.0.1-api
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8000

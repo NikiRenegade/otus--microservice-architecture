@@ -27,10 +27,10 @@ namespace UserService.Infrastructure.Repositories
             return await _context.Users.FirstOrDefaultAsync(u => u.Id == id);
         }
 
-        public async Task<bool> UpdateAsync(User entity)
+        public async Task<bool> UpdateAsync(Guid id, User entity)
         {
             var existingUser = await _context.Users
-                .FirstOrDefaultAsync(u => u.Id == entity.Id);
+                .FirstOrDefaultAsync(u => u.Id == id);
             if (existingUser == null)
                 return false;
 

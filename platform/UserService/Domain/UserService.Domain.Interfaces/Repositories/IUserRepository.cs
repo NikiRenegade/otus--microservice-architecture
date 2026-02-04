@@ -8,7 +8,7 @@ public interface IUserRepository : IRepository<User>
 
     Task<User?> AddAsync(User user, string password);
 
-    Task<bool> UpdateAsync(User user);
+    Task<bool> UpdateAsync(Guid id, User user);
 
     Task<bool> DeleteAsync(Guid id);
 }

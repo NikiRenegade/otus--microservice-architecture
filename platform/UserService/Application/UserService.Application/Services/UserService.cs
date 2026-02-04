@@ -47,9 +47,9 @@ public class UserService : IUserService
         return created.ToUserDto();
     }
 
-    public async Task<bool> UpdateAsync(UserUpdateDto dto)
+    public async Task<bool> UpdateAsync(Guid id, UserUpdateDto dto)
     {
-        return await _userRepository.UpdateAsync(dto.ToEntity());
+        return await _userRepository.UpdateAsync(id, dto.ToEntity());
     }
 
     public async Task<bool> DeleteAsync(Guid id)
