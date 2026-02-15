@@ -6,7 +6,7 @@
 ```shell
 helm repo add bitnami https://charts.bitnami.com/bitnami
 helm repo update
-helm install users-db bitnami/postgresql -f helm/values.yaml
+helm install users-postgres bitnami/postgresql -f helm/values.yaml
 ```
 
 3. Для запуска приложения требуется ввести следующие команды:
