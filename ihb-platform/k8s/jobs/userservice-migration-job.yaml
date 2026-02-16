@@ -9,7 +9,7 @@ spec:
       restartPolicy: OnFailure
       containers:
         - name: userservice-migration
-          image: nikirenegade/ihb-userservice:1.0.0
+          image: nikirenegade/ihb-userservice:1.0.0-migration
           imagePullPolicy: Always
           envFrom:
             - secretRef:

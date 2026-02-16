@@ -5,17 +5,29 @@ using UserService.Domain.Interfaces.Services;
 
 namespace UserService.Presentation.API.Controllers;
 
-[ApiController] 
+[ApiController]
 [Route("api/[controller]")]
-public class UserController: ControllerBase
+/// <summary>
+/// Web API контроллер для управления пользователями.
+/// Поддерживает получение списка, поиск, создание, обновление и удаление.
+/// </summary>
+public class UserController : ControllerBase
 {
     private readonly IUserService _userService;
 
+    /// <summary>
+    /// Конструктор контроллера.
+    /// </summary>
+    /// <param name="userService">Сервис пользователей.</param>
     public UserController(IUserService userService)
     {
         _userService = userService;
     }
-    
+
+    /// <summary>
+    /// Возвращает всех пользователей.
+    /// </summary>
+    /// <returns>Список пользователей в виде DTO.</returns>
     [HttpGet]
     public async Task<ActionResult<IList<UserDto>>> GetAll()
     {
@@ -30,6 +42,11 @@ public class UserController: ControllerBase
         }
     }
 
+    /// <summary>
+    /// Возвращает пользователя по идентификатору.
+    /// </summary>
+    /// <param name="id">Идентификатор пользователя.</param>
+    /// <returns>Пользователь в виде DTO или 404.</returns>
     [HttpGet("{id}")]
     public async Task<ActionResult<UserDto>> GetById(Guid id)
     {
@@ -48,6 +65,11 @@ public class UserController: ControllerBase
         }
     }
 
+    /// <summary>
+    /// Возвращает пользователя по email.
+    /// </summary>
+    /// <param name="email">Email пользователя.</param>
+    /// <returns>Пользователь в виде DTO или 404.</returns>
     [HttpGet("email/{email}")]
     public async Task<ActionResult<UserDto>> GetByEmail(string email)
     {
@@ -65,7 +87,12 @@ public class UserController: ControllerBase
             return StatusCode(500, new { message = "Ошибка сервера при получении пользователя", error = ex.Message });
         }
     }
-    
+
+    /// <summary>
+    /// Создаёт нового пользователя.
+    /// </summary>
+    /// <param name="request">Данные регистрации пользователя.</param>
+    /// <returns>HTTP 201 с данными созданного пользователя.</returns>
     [HttpPost]
     public async Task<ActionResult<UserRegisterDto>> Create([FromBody] UserRegisterDto request)
     {
@@ -85,6 +112,12 @@ public class UserController: ControllerBase
         }
     }
 
+    /// <summary>
+    /// Обновляет данные пользователя.
+    /// </summary>
+    /// <param name="id">Идентификатор обновляемого пользователя.</param>
+    /// <param name="request">DTO с новыми данными.</param>
+    /// <returns>HTTP 204 при успехе, 404 если пользователь не найден.</returns>
     [HttpPut("{id}")]
     public async Task<IActionResult> Update(Guid id, [FromBody] UserUpdateDto request)
     {
@@ -108,6 +141,11 @@ public class UserController: ControllerBase
         }
     }
 
+    /// <summary>
+    /// Удаляет пользователя по идентификатору.
+    /// </summary>
+    /// <param name="id">Идентификатор пользователя.</param>
+    /// <returns>HTTP 204 при успехе, 404 если не найден.</returns>
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(Guid id)
     {
@@ -125,5 +163,5 @@ public class UserController: ControllerBase
             return StatusCode(500, new { message = "Ошибка сервера при удалении пользователя", error = ex.Message });
         }
     }
-    
+
 }

@@ -11,7 +11,19 @@ namespace UserService.Infrastructure.EntityFramework.Contexts
             : base(options)
         {
         }
+        /// <summary>
+        /// Контекст базы данных для сущности <see cref="User"/>.
+        /// </summary>
+        /// <param name="options">Опции контекста.</param>
+        public UserDbContext(DbContextOptions<UserDbContext> options)
+            : base(options)
+        {
+        }
 
+        /// <summary>
+        /// Применяет конфигурации модели (включая <see cref="UserConfiguration"/>).
+        /// </summary>
+        /// <param name="builder">Builder модели EF.</param>
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
