@@ -7,10 +7,6 @@ namespace UserService.Infrastructure.EntityFramework.Contexts
 {
     public class UserDbContext : IdentityUserContext<User, Guid>
     {
-        public UserDbContext(DbContextOptions<UserDbContext> options)
-            : base(options)
-        {
-        }
         /// <summary>
         /// Контекст базы данных для сущности <see cref="User"/>.
         /// </summary>

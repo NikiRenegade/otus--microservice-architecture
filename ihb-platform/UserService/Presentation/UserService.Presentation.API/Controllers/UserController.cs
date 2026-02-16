@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
 using UserService.Domain.DTOs;
-using UserService.Domain.Interfaces.Repositories;
 using UserService.Domain.Interfaces.Services;
 
 namespace UserService.Presentation.API.Controllers;
@@ -102,7 +101,7 @@ public class UserController : ControllerBase
             var result = await _userService.AddAsync(request);
             return CreatedAtAction(nameof(GetById), new { id = result.Id }, result);
         }
-        catch (ArgumentException ex)
+        catch (InvalidOperationException ex)
         {
             return BadRequest(new { message = ex.Message });
         }
@@ -117,21 +116,21 @@ public class UserController : ControllerBase
     /// </summary>
     /// <param name="id">Идентификатор обновляемого пользователя.</param>
     /// <param name="request">DTO с новыми данными.</param>
-    /// <returns>HTTP 204 при успехе, 404 если пользователь не найден.</returns>
+    /// <returns>HTTP 200 с данными пользователе при успехе, 404 если пользователь не найден.</returns>
     [HttpPut("{id}")]
-    public async Task<IActionResult> Update(Guid id, [FromBody] UserUpdateDto request)
+    public async Task<ActionResult<UserDto>> Update(Guid id, [FromBody] UserUpdateDto request)
     {
         try
         {
-
             var updated = await _userService.UpdateAsync(id, request);
             if (!updated)
             {
                 return NotFound(new { message = $"Пользователь с данным Id = {id} не найден" });
             }
-            return NoContent();
+            var user = await _userService.GetByIdAsync(id);
+            return Ok(user);
         }
-        catch (ArgumentException ex)
+        catch (InvalidOperationException ex)
         {
             return BadRequest(new { message = ex.Message });
         }
@@ -145,7 +144,7 @@ public class UserController : ControllerBase
     /// Удаляет пользователя по идентификатору.
     /// </summary>
     /// <param name="id">Идентификатор пользователя.</param>
-    /// <returns>HTTP 204 при успехе, 404 если не найден.</returns>
+    /// <returns>HTTP 200 при успехе, 404 если не найден.</returns>
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(Guid id)
     {
@@ -156,7 +155,7 @@ public class UserController : ControllerBase
             {
                 return NotFound(new { message = $"Пользователь с данным Id = {id} не найден" });
             }
-            return NoContent();
+            return Ok(new { message = "Пользователь успешно удалён", id });
         }
         catch (Exception ex)
         {

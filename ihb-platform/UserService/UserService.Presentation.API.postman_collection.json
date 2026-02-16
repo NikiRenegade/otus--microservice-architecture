@@ -63,13 +63,8 @@
 										},
 										"url": {
 											"raw": "{{baseUrl}}/api/user",
-											"host": [
-												"{{baseUrl}}"
-											],
-											"path": [
-												"api",
-												"user"
-											]
+											"host": ["{{baseUrl}}"],
+											"path": ["api", "user"]
 										}
 									},
 									"response": [
@@ -99,13 +94,8 @@
 												},
 												"url": {
 													"raw": "{{baseUrl}}/api/User",
-													"host": [
-														"{{baseUrl}}"
-													],
-													"path": [
-														"api",
-														"User"
-													]
+													"host": ["{{baseUrl}}"],
+													"path": ["api", "User"]
 												}
 											},
 											"status": "OK",
@@ -158,15 +148,8 @@
 												],
 												"url": {
 													"raw": "{{baseUrl}}/api/user/email/:email",
-													"host": [
-														"{{baseUrl}}"
-													],
-													"path": [
-														"api",
-														"user",
-														"email",
-														":email"
-													],
+													"host": ["{{baseUrl}}"],
+													"path": ["api", "user", "email", ":email"],
 													"variable": [
 														{
 															"key": "email",
@@ -188,15 +171,8 @@
 														],
 														"url": {
 															"raw": "{{baseUrl}}/api/User/email/:email",
-															"host": [
-																"{{baseUrl}}"
-															],
-															"path": [
-																"api",
-																"User",
-																"email",
-																":email"
-															],
+															"host": ["{{baseUrl}}"],
+															"path": ["api", "User", "email", ":email"],
 															"variable": [
 																{
 																	"key": "email",
@@ -254,14 +230,8 @@
 										],
 										"url": {
 											"raw": "{{baseUrl}}/api/user/:id",
-											"host": [
-												"{{baseUrl}}"
-											],
-											"path": [
-												"api",
-												"user",
-												":id"
-											],
+											"host": ["{{baseUrl}}"],
+											"path": ["api", "user", ":id"],
 											"variable": [
 												{
 													"key": "id",
@@ -283,14 +253,8 @@
 												],
 												"url": {
 													"raw": "{{baseUrl}}/api/User/:id",
-													"host": [
-														"{{baseUrl}}"
-													],
-													"path": [
-														"api",
-														"User",
-														":id"
-													],
+													"host": ["{{baseUrl}}"],
+													"path": ["api", "User", ":id"],
 													"variable": [
 														{
 															"key": "id",
@@ -320,8 +284,8 @@
 											"listen": "test",
 											"script": {
 												"exec": [
-													"pm.test(\"Статус код - 204\", function () {",
-													"    pm.expect(pm.response.code).to.be.eql(204);",
+													"pm.test(\"Статус код - 200\", function () {",
+													"    pm.expect(pm.response.code).to.be.eql(200);",
 													"});",
 													""
 												],
@@ -356,14 +320,8 @@
 										},
 										"url": {
 											"raw": "{{baseUrl}}/api/user/:id",
-											"host": [
-												"{{baseUrl}}"
-											],
-											"path": [
-												"api",
-												"user",
-												":id"
-											],
+											"host": ["{{baseUrl}}"],
+											"path": ["api", "user", ":id"],
 											"variable": [
 												{
 													"key": "id",
@@ -395,14 +353,8 @@
 												},
 												"url": {
 													"raw": "{{baseUrl}}/api/User/:id",
-													"host": [
-														"{{baseUrl}}"
-													],
-													"path": [
-														"api",
-														"User",
-														":id"
-													],
+													"host": ["{{baseUrl}}"],
+													"path": ["api", "User", ":id"],
 													"variable": [
 														{
 															"key": "id",
@@ -427,8 +379,8 @@
 											"listen": "test",
 											"script": {
 												"exec": [
-													"pm.test(\"Статус код - 204\", function () {",
-													"    pm.expect(pm.response.code).to.be.eql(204);",
+													"pm.test(\"Статус код - 200\", function () {",
+													"    pm.expect(pm.response.code).to.be.eql(200);",
 													"});",
 													""
 												],
@@ -448,14 +400,8 @@
 										],
 										"url": {
 											"raw": "{{baseUrl}}/api/user/:id",
-											"host": [
-												"{{baseUrl}}"
-											],
-											"path": [
-												"api",
-												"user",
-												":id"
-											],
+											"host": ["{{baseUrl}}"],
+											"path": ["api", "user", ":id"],
 											"variable": [
 												{
 													"key": "id",
@@ -472,14 +418,8 @@
 												"header": [],
 												"url": {
 													"raw": "{{baseUrl}}/api/User/:id",
-													"host": [
-														"{{baseUrl}}"
-													],
-													"path": [
-														"api",
-														"User",
-														":id"
-													],
+													"host": ["{{baseUrl}}"],
+													"path": ["api", "User", ":id"],
 													"variable": [
 														{
 															"key": "id",
@@ -527,13 +467,8 @@
 								],
 								"url": {
 									"raw": "{{baseUrl}}/api/user",
-									"host": [
-										"{{baseUrl}}"
-									],
-									"path": [
-										"api",
-										"user"
-									]
+									"host": ["{{baseUrl}}"],
+									"path": ["api", "user"]
 								}
 							},
 							"response": [
@@ -549,13 +484,8 @@
 										],
 										"url": {
 											"raw": "{{baseUrl}}/api/User",
-											"host": [
-												"{{baseUrl}}"
-											],
-											"path": [
-												"api",
-												"User"
-											]
+											"host": ["{{baseUrl}}"],
+											"path": ["api", "User"]
 										}
 									},
 									"status": "OK",
@@ -621,13 +551,8 @@
 						},
 						"url": {
 							"raw": "{{baseUrl}}/api/user",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"api",
-								"user"
-							]
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "user"]
 						}
 					},
 					"response": [
@@ -657,13 +582,8 @@
 								},
 								"url": {
 									"raw": "{{baseUrl}}/api/User",
-									"host": [
-										"{{baseUrl}}"
-									],
-									"path": [
-										"api",
-										"User"
-									]
+									"host": ["{{baseUrl}}"],
+									"path": ["api", "User"]
 								}
 							},
 							"status": "OK",

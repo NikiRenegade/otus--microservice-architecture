@@ -105,7 +105,7 @@ Content-Type: application/json
   "lastName": "Smith"
 }
 
-Response: 204 No Content / 404 Not Found
+Response: 200 ОК / 404 Not Found
 ```
 
 ### DELETE `/api/user/{id}`
@@ -114,7 +114,7 @@ Response: 204 No Content / 404 Not Found
 
 ```json
 DELETE /api/user/550e8400-e29b-41d4-a716-446655440000
-Response: 204 No Content / 404 Not Found
+Response: 200 ОК / 404 Not Found
 ```
 
 ---
