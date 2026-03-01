@@ -128,12 +128,16 @@ Response: 200 ОК / 404 Not Found
 
 ### Конфигурации
 
-- **`helm/values.yaml`** — параметры Helm чарта для PostgreSQL
+- **`helm/postgres-values.yaml`** — параметры Helm чарта для PostgreSQL
+- **`helm/prometheus-values.yaml`** — параметры Helm чарта для Prometheus
 - **`k8s/userservice/userservice-secret.yaml`** — учётные данные и переменные
 - **`k8s/userservice/userservice-configmap.yaml`** — публичные параметры конфигурации
 - **`k8s/userservice/userservice-deployment.yaml`** — описание развёртывания сервиса
 - **`k8s/userservice/userservice-service.yaml`** — K8s Service для внутреннего доступа
 - **`k8s/userservice/userservice-ingress.yaml`** — маршрутизация внешнего трафика
+- **`userservice-servicemonitor.yaml`** — ServiceMonitor для сбора метрик приложения.
+- **`userservice-ingress-nginx-servicemonitor.yaml`** — ServiceMonitor для сбора метрик ingress‑контроллера.
+- **`userservice-prometheus-ingress.yaml`, `userservice-grafana-ingress.yaml`** — маршрутизация внешнего трафика для Prometheus/Grafana UI.
 
 ### Установка базы данных через Helm
 
@@ -172,6 +176,12 @@ kubectl apply -f k8s/userservice/userservice-service.yaml
 
 # 6. Настройте Ingress для маршрутизации трафика
 kubectl apply -f k8s/userservice/userservice-ingress.yaml
+
+# 7.ServiceMonitors / Grafana / Prometheus ingress
+kubectl apply -f k8s/userservice/userservice-servicemonitor.yaml
+kubectl apply -f k8s/userservice/userservice-ingress-nginx-servicemonitor.yaml
+kubectl apply -f k8s/userservice/userservice-prometheus-ingress.yaml
+kubectl apply -f k8s/userservice/userservice-grafana-ingress.yaml
 ```
 
 ---

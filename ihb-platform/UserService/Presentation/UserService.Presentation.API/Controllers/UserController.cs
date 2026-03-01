@@ -92,8 +92,8 @@ public class UserController : ControllerBase
     /// </summary>
     /// <param name="request">Данные регистрации пользователя.</param>
     /// <returns>HTTP 201 с данными созданного пользователя.</returns>
-    [HttpPost]
-    public async Task<ActionResult<UserRegisterDto>> Create([FromBody] UserRegisterDto request)
+    [HttpPost("register")]
+    public async Task<ActionResult<UserRegisterDto>> Register([FromBody] UserRegisterDto request)
     {
         try
         {

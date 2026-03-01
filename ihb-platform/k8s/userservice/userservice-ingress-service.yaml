@@ -1,0 +1,15 @@
+# Service, экспортирующий метрики nginx-ingress контроллера для Prometheus
+apiVersion: v1
+kind: Service
+metadata:
+  name: ingress-nginx-metrics
+  namespace: ingress-nginx
+  labels:
+    app: ingress-nginx
+spec:
+  selector:
+    app.kubernetes.io/name: ingress-nginx
+  ports:
+    - name: metrics
+      port: 10254
+      targetPort: 10254

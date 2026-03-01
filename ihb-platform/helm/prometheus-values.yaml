@@ -1,0 +1,6 @@
+prometheus:
+  prometheusSpec:
+    externalUrl: http://prometheus.arch.homework
+    routePrefix: /
+    serviceMonitorSelectorNilUsesHelmValues: false
+    serviceMonitorSelector: { }
