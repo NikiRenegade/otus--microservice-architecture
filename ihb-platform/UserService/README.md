@@ -149,7 +149,19 @@ helm repo update
 helm install users-postgres bitnami/postgresql -f helm/values.yaml
 ```
 
-Этот шаг создаёт PostgreSQL с конфигурацией из `helm/values.yaml`.
+Этот шаг создаёт PostgreSQL с конфигурацией из `helm/postgres-values.yaml`.
+
+### Установка Prometheus через Helm (опционально)
+
+Добавьте репозиторий и установите kube-prometheus-stack:
+
+```shell
+helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+helm repo update
+helm install stack prometheus-community/kube-prometheus-stack -f helm/prometheus-values.yaml
+```
+
+Этот шаг создаёт Prometheus, Grafana и другие компоненты мониторинга с конфигурацией из `helm/prometheus-values.yaml`.
 
 ### Развёртывание сервиса в Kubernetes
 
@@ -177,10 +189,16 @@ kubectl apply -f k8s/userservice/userservice-service.yaml
 # 6. Настройте Ingress для маршрутизации трафика
 kubectl apply -f k8s/userservice/userservice-ingress.yaml
 
-# 7.ServiceMonitors / Grafana / Prometheus ingress
+# 7. Создайте ServiceMonitor для сбора метрик самого приложения
 kubectl apply -f k8s/userservice/userservice-servicemonitor.yaml
+
+# 8. Создайте ServiceMonitor для сбора метрик ingress-nginx контроллера
 kubectl apply -f k8s/userservice/userservice-ingress-nginx-servicemonitor.yaml
+
+# 9. Настройте Ingress для доступа к Prometheus UI
 kubectl apply -f k8s/userservice/userservice-prometheus-ingress.yaml
+
+# 10. Настройте Ingress для доступа к Grafana UI
 kubectl apply -f k8s/userservice/userservice-grafana-ingress.yaml
 ```
 
