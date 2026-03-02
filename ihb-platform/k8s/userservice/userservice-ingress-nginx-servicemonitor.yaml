@@ -1,0 +1,21 @@
+# ServiceMonitor  для сбора метрик nginx-ingress контроллера
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: nginx-ingress-monitor
+  labels:
+    app: ingress-nginx
+    release: stack
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: ingress-nginx
+  namespaceSelector:
+    matchNames:
+      - ingress-nginx
+  endpoints:
+    - port: metrics
+      path: /metrics
+      scrapeTimeout: 10s
+      scheme: http
+      honorLabels: true

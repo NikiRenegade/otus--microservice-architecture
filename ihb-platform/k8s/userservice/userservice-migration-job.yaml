@@ -1,3 +1,4 @@
+# Job для запуска миграций базы данных при деплое (контейнер выполняет команды EF Core)
 apiVersion: batch/v1
 kind: Job
 metadata:

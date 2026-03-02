@@ -1,3 +1,4 @@
+# ConfigMap с переменными окружения для userservice (URL, среда исполнения и прочие настройки)
 apiVersion: v1
 kind: ConfigMap
 metadata:

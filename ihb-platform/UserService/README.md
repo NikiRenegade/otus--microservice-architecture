@@ -128,12 +128,16 @@ Response: 200 ОК / 404 Not Found
 
 ### Конфигурации
 
-- **`helm/values.yaml`** — параметры Helm чарта для PostgreSQL
+- **`helm/postgres-values.yaml`** — параметры Helm чарта для PostgreSQL
+- **`helm/prometheus-values.yaml`** — параметры Helm чарта для Prometheus
 - **`k8s/userservice/userservice-secret.yaml`** — учётные данные и переменные
 - **`k8s/userservice/userservice-configmap.yaml`** — публичные параметры конфигурации
 - **`k8s/userservice/userservice-deployment.yaml`** — описание развёртывания сервиса
 - **`k8s/userservice/userservice-service.yaml`** — K8s Service для внутреннего доступа
 - **`k8s/userservice/userservice-ingress.yaml`** — маршрутизация внешнего трафика
+- **`userservice-servicemonitor.yaml`** — ServiceMonitor для сбора метрик приложения.
+- **`userservice-ingress-nginx-servicemonitor.yaml`** — ServiceMonitor для сбора метрик ingress‑контроллера.
+- **`userservice-prometheus-ingress.yaml`, `userservice-grafana-ingress.yaml`** — маршрутизация внешнего трафика для Prometheus/Grafana UI.
 
 ### Установка базы данных через Helm
 
@@ -145,7 +149,19 @@ helm repo update
 helm install users-postgres bitnami/postgresql -f helm/values.yaml
 ```
 
-Этот шаг создаёт PostgreSQL с конфигурацией из `helm/values.yaml`.
+Этот шаг создаёт PostgreSQL с конфигурацией из `helm/postgres-values.yaml`.
+
+### Установка Prometheus через Helm (опционально)
+
+Добавьте репозиторий и установите kube-prometheus-stack:
+
+```shell
+helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+helm repo update
+helm install stack prometheus-community/kube-prometheus-stack -f helm/prometheus-values.yaml
+```
+
+Этот шаг создаёт Prometheus, Grafana и другие компоненты мониторинга с конфигурацией из `helm/prometheus-values.yaml`.
 
 ### Развёртывание сервиса в Kubernetes
 
@@ -172,6 +188,18 @@ kubectl apply -f k8s/userservice/userservice-service.yaml
 
 # 6. Настройте Ingress для маршрутизации трафика
 kubectl apply -f k8s/userservice/userservice-ingress.yaml
+
+# 7. Создайте ServiceMonitor для сбора метрик самого приложения
+kubectl apply -f k8s/userservice/userservice-servicemonitor.yaml
+
+# 8. Создайте ServiceMonitor для сбора метрик ingress-nginx контроллера
+kubectl apply -f k8s/userservice/userservice-ingress-nginx-servicemonitor.yaml
+
+# 9. Настройте Ingress для доступа к Prometheus UI
+kubectl apply -f k8s/userservice/userservice-prometheus-ingress.yaml
+
+# 10. Настройте Ingress для доступа к Grafana UI
+kubectl apply -f k8s/userservice/userservice-grafana-ingress.yaml
 ```
 
 ---

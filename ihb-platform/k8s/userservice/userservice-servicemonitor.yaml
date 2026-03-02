@@ -1,0 +1,21 @@
+# ServiceMonitor для сбора метрик самого userservice (путь /metrics)
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: userservice-monitor
+  labels:
+    app: userservice
+    release: stack
+spec:
+  selector:
+    matchLabels:
+      app: userservice
+  namespaceSelector:
+    matchNames:
+      - default
+  endpoints:
+    - port: userservice
+      path: /metrics
+      scrapeTimeout: 10s
+      scheme: http
+      honorLabels: true

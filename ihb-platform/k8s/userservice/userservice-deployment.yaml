@@ -1,3 +1,4 @@
+# Deployment, описывающий pod и контейнер userservice; устанавливает replica set, ресурсы, переменные и образ
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -17,7 +18,7 @@ spec:
     spec:
       containers:
         - name: userservice
-          image: nikirenegade/ihb-userservice:1.0.1-api
+          image: nikirenegade/ihb-userservice:1.0.2-api
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8000
@@ -26,3 +27,10 @@ spec:
                 name: userservice-config
             - secretRef:
                 name: userservice-secret
+          resources:
+            requests:
+              cpu: '100m'
+              memory: '128Mi'
+            limits:
+              cpu: '500m'
+              memory: '512Mi'
