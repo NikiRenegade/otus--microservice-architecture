@@ -1,0 +1,15 @@
+# Service для доступа к userservice внутри/снаружи кластера 
+apiVersion: v1
+kind: Service
+metadata:
+  name: gatewayservice
+  labels:
+    app: gatewayservice
+spec:
+  selector:
+    app: gatewayservice
+  ports:
+    - name: http
+      port: 80
+      targetPort: 8000
+  type: ClusterIP

@@ -98,7 +98,7 @@ public class UserController : ControllerBase
         try
         {
 
-            var result = await _userService.AddAsync(request);
+            var result = await _userService.RegisterAsync(request);
             return CreatedAtAction(nameof(GetById), new { id = result.Id }, result);
         }
         catch (InvalidOperationException ex)
@@ -109,6 +109,17 @@ public class UserController : ControllerBase
         {
             return StatusCode(500, new { message = "Ошибка сервера при создании пользователя", error = ex.Message });
         }
+    }
+    
+    [HttpPost("login")]
+    public async Task<ActionResult<UserAuthSuccess>> Login([FromBody] UserLoginDto dto)
+    {
+        var userAuthSuccess = await _userService.LoginAsync(dto);
+
+        if (userAuthSuccess == null)
+            return Unauthorized(new { Message = "Неверный email или пароль." });
+        
+        return Ok(userAuthSuccess);
     }
 
     /// <summary>

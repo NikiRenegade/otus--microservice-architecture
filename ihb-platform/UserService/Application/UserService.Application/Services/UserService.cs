@@ -12,14 +12,20 @@ namespace UserService.Application.Services;
 public class UserService : IUserService
 {
     private readonly IUserRepository _userRepository;
+    private readonly IJwtTokenService _jwtTokenService;
+    private readonly IIdentityService _identityService;
 
     /// <summary>
     /// Конструктор сервиса.
     /// </summary>
     /// <param name="userRepository">Репозиторий пользователей.</param>
-    public UserService(IUserRepository userRepository)
+    /// <param name="jwtTokenService">Сервис генерации jwt.</param>
+    /// <param name="IIdentityService">Сервис идентификации.</param>
+    public UserService(IUserRepository userRepository, IJwtTokenService jwtTokenService, IIdentityService identityService)
     {
         _userRepository = userRepository;
+        _jwtTokenService = jwtTokenService;
+        _identityService = identityService;
     }
 
     /// <summary>
@@ -59,7 +65,7 @@ public class UserService : IUserService
     /// </summary>
     /// <param name="dto">Данные для регистрации пользователя.</param>
     /// <returns>Созданный пользователь в виде DTO.</returns>
-    public async Task<UserDto> AddAsync(UserRegisterDto dto)
+    public async Task<UserDto> RegisterAsync(UserRegisterDto dto)
     {
         var existingUser = await _userRepository.GetByEmailAsync(dto.Email);
         if (existingUser != null)
@@ -67,7 +73,7 @@ public class UserService : IUserService
 
         var user = dto.ToEntity();
 
-        var created = await _userRepository.AddAsync(user, dto.Password);
+        var created = await _identityService.RegisterAsync(user, dto.Password);
         if (created == null)
             throw new InvalidOperationException("Не удалось создать пользователя.");
         return created.ToUserDto();
@@ -92,5 +98,26 @@ public class UserService : IUserService
     public async Task<bool> DeleteAsync(Guid id)
     {
         return await _userRepository.DeleteAsync(id);
+    }
+
+    /// <summary>
+    /// Проверяет попытку входа пользователя в систему
+    /// </summary>
+    /// <param name="dto"></param>
+    /// <returns>Пользователь в виде DTO с токеном или <c>null</c>, если попытка входа неудачна.</returns>
+    public async Task<UserAuthSuccess?> LoginAsync(UserLoginDto dto)
+    {
+        var user = await _userRepository.GetByEmailAsync(dto.Email);
+        var result = await _identityService.SignInAsync(user, dto.Password);
+        if (result == false)
+        {
+            return null;
+        }
+        var accessToken = _jwtTokenService.GenerateJwtToken(user);
+        return new UserAuthSuccess
+        {
+            UserDto = user.ToUserDto(),
+            AccessToken = accessToken,
+        };
     }
 }

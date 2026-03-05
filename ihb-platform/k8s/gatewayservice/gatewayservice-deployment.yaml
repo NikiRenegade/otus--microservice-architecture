@@ -2,37 +2,35 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: userservice
+  name: gatewayservice
   labels:
-    app: userservice
+    app: gatewayservice
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: userservice
+      app: gatewayservice
   template:
     metadata:
-      name: userservice
+      name: gatewayservice
       labels:
-        app: userservice
+        app: gatewayservice
     spec:
       containers:
-        - name: userservice
-          image: nikirenegade/ihb-userservice:1.0.3-api
+        - name: gatewayservice
+          image: nikirenegade/ihb-gatewayservice:1.0.1
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8000
           envFrom:
             - configMapRef:
-                name: userservice-config
-            - secretRef:
-                name: userservice-secret
+                name: gatewayservice-config
             - secretRef:
                 name: jwt-secret
           resources:
             requests:
-              cpu: '100m'
-              memory: '128Mi'
+              cpu: "100m"
+              memory: "128Mi"
             limits:
-              cpu: '500m'
-              memory: '512Mi'
+              cpu: "500m"
+              memory: "512Mi"

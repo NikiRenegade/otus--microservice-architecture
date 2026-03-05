@@ -7,22 +7,23 @@ using UserService.Infrastructure.EntityFramework.Contexts;
 namespace UserService.Infrastructure.Repositories
 {
     /// <summary>
-    /// Конкретная реализация репозитория пользователей, использующая EF Core и <see cref="UserManager{TUser}"/>.
+    /// Конкретная реализация репозитория пользователей, использующая EF Core,
+    /// <see cref="UserManager{TUser}" /> и 
+    /// <see cref="SignInManager{TUser}" />.
     /// </summary>
     public class UserRepository : IUserRepository
     {
         private readonly UserDbContext _context;
-        private readonly UserManager<User> _userManager;
 
         /// <summary>
         /// Конструктор репозитория.
         /// </summary>
         /// <param name="context">Контекст БД.</param>
         /// <param name="userManager">Менеджер работы с Identity-пользователями.</param>
-        public UserRepository(UserDbContext context, UserManager<User> userManager)
+        /// <param name="signInManager">Менеджер работы с Identity-пользователями для попытки входа в систему.</param>
+        public UserRepository(UserDbContext context)
         {
             _context = context;
-            _userManager = userManager;
         }
 
         /// <summary>
@@ -81,7 +82,6 @@ namespace UserService.Infrastructure.Repositories
             await _context.SaveChangesAsync();
             return true;
         }
-
         /// <summary>
         /// Поиск пользователя по Email.
         /// </summary>
@@ -90,20 +90,6 @@ namespace UserService.Infrastructure.Repositories
         public async Task<User?> GetByEmailAsync(string email)
         {
             return await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
-        }
-
-        /// <summary>
-        /// Создаёт пользователя через <see cref="UserManager{TUser}"/>.
-        /// </summary>
-        /// <param name="user">Сущность пользователя.</param>
-        /// <param name="password">Пароль в открытом виде.</param>
-        /// <returns>Созданный пользователь или <c>null</c>, если создание не удалось.</returns>
-        public async Task<User?> AddAsync(User user, string password)
-        {
-            var result = await _userManager.CreateAsync(user, password);
-            if (result.Succeeded)
-                return _userManager.Users.FirstOrDefault(u => u.Email == user.Email);
-            return null;
         }
     }
 }

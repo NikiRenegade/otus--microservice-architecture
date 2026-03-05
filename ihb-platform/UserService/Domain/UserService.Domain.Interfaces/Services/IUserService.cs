@@ -34,7 +34,7 @@ public interface IUserService
     /// </summary>
     /// <param name="dto">Данные для регистрации пользователя.</param>
     /// <returns>Созданный пользователь в виде DTO.</returns>
-    Task<UserDto> AddAsync(UserRegisterDto dto);
+    Task<UserDto> RegisterAsync(UserRegisterDto dto);
 
     /// <summary>
     /// Обновляет данные пользователя.
@@ -50,4 +50,11 @@ public interface IUserService
     /// <param name="id">Идентификатор пользователя для удаления.</param>
     /// <returns><c>true</c>, если удаление выполнено; иначе <c>false</c>.</returns>
     Task<bool> DeleteAsync(Guid id);
+    
+    /// <summary>
+    /// Проверяет попытку входа пользователя в систему
+    /// </summary>
+    /// <param name="dto"></param>
+    /// <returns>Пользователь в виде DTO с токеном или <c>null</c>, если попытка входа неудачна.</returns>
+    Task<UserAuthSuccess?> LoginAsync(UserLoginDto dto);
 }

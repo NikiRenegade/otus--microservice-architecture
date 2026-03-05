@@ -15,14 +15,6 @@ public interface IUserRepository : IRepository<User>
     Task<User?> GetByEmailAsync(string email);
 
     /// <summary>
-    /// Создаёт нового пользователя с заданным паролем.
-    /// </summary>
-    /// <param name="user">Сущность пользователя.</param>
-    /// <param name="password">Пароль в открытом виде.</param>
-    /// <returns>Созданный пользователь или <c>null</c> при отсутствии успеха.</returns>
-    Task<User?> AddAsync(User user, string password);
-
-    /// <summary>
     /// Обновляет поля существующего пользователя.
     /// </summary>
     /// <param name="id">Идентификатор обновляемого пользователя.</param>
