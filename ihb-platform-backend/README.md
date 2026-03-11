@@ -78,7 +78,7 @@ kubectl apply -f k8s/ingress-nginx/ingress-nginx-servicemonitor.yaml
 1. **[UserService инструкция по развёртыванию](./UserService/README.md#развёртывание)** - создание БД, миграции, развёртывание сервиса
 2. **[GatewayService инструкция по развёртыванию](./GatewayService/README.md#развёртывание)** - настройка шлюза и маршрутизации
 
-## 📊 Мониторинг
+## Мониторинг
 
 ### Prometheus
 
