@@ -4,7 +4,7 @@
 
 ## Структура репозитория
 
-- **[ihb-platform-backend](ihb-platform-backend/)** - Основная платформа.[README](ihb-platform-backend/README.md)
+- **[ihb-platform-backend](ihb-platform-backend/)** - Основная платформа ([README](ihb-platform-backend/README.md))
   - [UserService](ihb-platform-backend/UserService/) - Микросервис управления пользователями ([README](ihb-platform-backend/UserService/README.md))
   - [GatewayService](ihb-platform-backend/GatewayService/) - API Gateway с аутентификацией ([README](ihb-platform-backend/GatewayService/README.md))
 
