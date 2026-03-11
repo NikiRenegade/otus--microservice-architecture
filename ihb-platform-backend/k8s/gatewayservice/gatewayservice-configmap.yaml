@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: gatewayservice-config
+data:
+  ASPNETCORE_URLS: "http://+:8000"
+  ASPNETCORE_ENVIRONMENT: "Production"
+
+  ReverseProxy__Clusters__user-cluster__Destinations__user_api__Address: "http://userservice:80"
