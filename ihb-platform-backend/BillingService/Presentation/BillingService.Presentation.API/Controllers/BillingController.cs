@@ -1,0 +1,67 @@
+using BillingService.Domain.Entities;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
+using BillingService.Domain.Interfaces.Services;
+
+namespace BillingService.Presentation.API.Controllers;
+
+
+[ApiController]
+[Route("api/[controller]")]
+public class BillingController : ControllerBase
+{
+    private readonly IAccountService _accountService;
+
+    public BillingController(IAccountService accountService)
+    {
+        _accountService = accountService;
+    }
+    [Authorize]
+    [HttpPost("deposit/{amount}")]
+    public async Task<IActionResult> Deposit(decimal amount)
+    {
+        var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+        if (userId == null)
+            return Unauthorized();
+
+        var result = await _accountService.DepositAsync(Guid.Parse(userId), amount);
+
+        if (!result)
+            return BadRequest("Произошла ошибка");
+
+        return Ok();
+    }
+    [Authorize]
+    [HttpPost("withdraw/{amount}")]
+    public async Task<IActionResult> Withdraw(decimal amount)
+    {
+        var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+        if (userId == null)
+            return Unauthorized();
+
+        var result = await _accountService.WithdrawAsync(Guid.Parse(userId), amount);
+
+        if (!result)
+            return BadRequest("Недостаточно средств");
+
+        return Ok();
+    }
+    [Authorize]
+    [HttpGet("account")]
+    public async Task<IActionResult> Get()
+    {
+        var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        
+        if (userId == null)
+            return Unauthorized();
+        
+        var account = await _accountService.GetByIdAsync(Guid.Parse(userId));
+        if (account == null)
+            return NotFound();
+
+        return Ok(account);
+    }
+}

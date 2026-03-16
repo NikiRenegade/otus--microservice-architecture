@@ -1,11 +1,14 @@
 using Microsoft.AspNetCore.Mvc;
 using UserService.Domain.DTOs;
+using UserService.Domain.Events;
+using UserService.Domain.Interfaces.Publishers;
 using UserService.Domain.Interfaces.Services;
 
 namespace UserService.Presentation.API.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
+
 /// <summary>
 /// Web API контроллер для управления пользователями.
 /// Поддерживает получение списка, поиск, создание, обновление и удаление.
@@ -13,14 +16,17 @@ namespace UserService.Presentation.API.Controllers;
 public class UserController : ControllerBase
 {
     private readonly IUserService _userService;
+    private readonly IUserEventPublisher _userEventPublisher;
 
     /// <summary>
     /// Конструктор контроллера.
     /// </summary>
     /// <param name="userService">Сервис пользователей.</param>
-    public UserController(IUserService userService)
+    /// <param name="userEventPublisher">Сервис отправки события.</param>
+    public UserController(IUserService userService, IUserEventPublisher userEventPublisher)
     {
         _userService = userService;
+        _userEventPublisher = userEventPublisher;
     }
 
     /// <summary>
@@ -97,8 +103,8 @@ public class UserController : ControllerBase
     {
         try
         {
-
             var result = await _userService.RegisterAsync(request);
+            await _userEventPublisher.PublishUserCreated(new UserCreatedEvent { UserId = result.Id, Email = result.Email });
             return CreatedAtAction(nameof(GetById), new { id = result.Id }, result);
         }
         catch (InvalidOperationException ex)
@@ -139,6 +145,7 @@ public class UserController : ControllerBase
                 return NotFound(new { message = $"Пользователь с данным Id = {id} не найден" });
             }
             var user = await _userService.GetByIdAsync(id);
+            await _userEventPublisher.PublishUserUpdated(new UserUpdatedEvent() { Id = id, Email = request.Email });
             return Ok(user);
         }
         catch (InvalidOperationException ex)
@@ -166,6 +173,7 @@ public class UserController : ControllerBase
             {
                 return NotFound(new { message = $"Пользователь с данным Id = {id} не найден" });
             }
+            await _userEventPublisher.PublishUserDeleted(id);
             return Ok(new { message = "Пользователь успешно удалён", id });
         }
         catch (Exception ex)

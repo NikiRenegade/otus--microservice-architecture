@@ -2,6 +2,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using UserService.Domain.DTOs;
+using UserService.Domain.Events;
+using UserService.Domain.Interfaces.Publishers;
 using UserService.Domain.Interfaces.Services;
 
 namespace UserService.Presentation.API.Controllers;
@@ -13,10 +15,12 @@ public class ProfileController : ControllerBase
 {
 
     private readonly IUserService _userService;
+    private readonly IUserEventPublisher _userEventPublisher;
 
-    public ProfileController(IUserService userService)
+    public ProfileController(IUserService userService, IUserEventPublisher userEventPublisher)
     {
         _userService = userService;
+        _userEventPublisher = userEventPublisher;
     }
 
     [HttpGet]
@@ -39,7 +43,6 @@ public class ProfileController : ControllerBase
     {
         try
         {
-
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
             if (userId == null)
@@ -50,7 +53,8 @@ public class ProfileController : ControllerBase
             {
                 return NotFound(new { message = $"Пользователь с данным Id = {userId} не найден" });
             }
-
+            await _userEventPublisher.PublishUserUpdated(new UserUpdatedEvent() 
+                { Id = Guid.Parse(userId), Email = request.Email });
             var user = await _userService.GetByIdAsync(Guid.Parse(userId));
 
             return Ok(user);
