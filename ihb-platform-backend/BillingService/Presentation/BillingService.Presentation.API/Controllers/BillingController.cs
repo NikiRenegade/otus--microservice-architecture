@@ -6,13 +6,19 @@ using BillingService.Domain.Interfaces.Services;
 
 namespace BillingService.Presentation.API.Controllers;
 
-
+/// <summary>
+/// Контроллер для обработки операций выставления счетов, включая пополнения, снятия и получение счетов.
+/// </summary>
 [ApiController]
 [Route("api/[controller]")]
 public class BillingController : ControllerBase
 {
     private readonly IAccountService _accountService;
 
+    /// <summary>
+    /// Инициализирует новый экземпляр класса <see cref="BillingController"/>.
+    /// </summary>
+    /// <param name="accountService">Сервис счетов для выполнения операций выставления счетов.</param>
     public BillingController(IAccountService accountService)
     {
         _accountService = accountService;

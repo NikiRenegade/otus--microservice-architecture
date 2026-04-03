@@ -56,11 +56,11 @@ public interface IAccountService
     Task<(bool Success, Guid PaymentId)> DepositAsync(Guid userId, decimal amount);
     
     /// <summary>
-    /// 
+    /// Снятие средств со счета.
     /// </summary>
-    /// <param name="id"></param>
-    /// <param name="amount"></param>
-    /// <returns></returns>
+    /// <param name="userId">Идентификатор пользователя счета, со которого снимаются средства.</param>
+    /// <param name="amount">Сумма снятия.</param>
+    /// <returns>Кортеж с результатом выполнения и идентификатором платежа.</returns>
     Task<(bool Success, Guid PaymentId)> WithdrawAsync(Guid userId, decimal amount);
 
     /// <summary>

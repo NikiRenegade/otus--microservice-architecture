@@ -4,8 +4,16 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace BillingService.Infrastructure.EntityFramework.Configurations;
 
+/// <summary>
+/// Конфигурация Entity Framework для сущности Payment.
+/// Определяет структуру таблицы, ключи, ограничения и конфигурации свойств.
+/// </summary>
 public class PaymentConfiguration : IEntityTypeConfiguration<Payment>
 {
+    /// <summary>
+    /// Настраивает отображение сущности Payment.
+    /// </summary>
+    /// <param name="builder">Построитель типа сущности для настройки свойств Payment.</param>
     public void Configure(EntityTypeBuilder<Payment> builder)
     {
         builder.ToTable("Payments");

@@ -7,16 +7,42 @@ using Shared.RabbitMq.Interfaces;
 
 namespace Shared.RabbitMq;
 
+/// <summary>
+/// Реализация подписчика событий для RabbitMQ брокера сообщений.
+/// Обеспечивает автоматическое объявление exchange и очередей, привязку и обработку сообщений.
+/// </summary>
 public class RabbitMqEventConsumer : IEventConsumer
 {
+    /// <summary>
+    /// Задача асинхронного подключения к каналу RabbitMQ.
+    /// </summary>
     private readonly Task<IChannel> _channelTask;
+
+    /// <summary>
+    /// Кеш объявленных очередей для избежания повторных объявлений.
+    /// </summary>
     private readonly ConcurrentDictionary<string, bool> _queues = new();
 
+    /// <summary>
+    /// Инициализирует новый экземпляр класса <see cref="RabbitMqEventConsumer"/>.
+    /// </summary>
+    /// <param name="channelTask">Задача, возвращающая готовый канал RabbitMQ.</param>
     public RabbitMqEventConsumer(Task<IChannel> channelTask)
     {
         _channelTask = channelTask;
     }
 
+    /// <summary>
+    /// Асинхронно подписывает обработчик на события из RabbitMQ.
+    /// Автоматически создает exchange, очередь и привязывает их к routing key.
+    /// Событие десериализуется из JSON и передается в обработчик.
+    /// </summary>
+    /// <typeparam name="T">Тип события для десериализации.</typeparam>
+    /// <param name="name">Имя потребителя.</param>
+    /// <param name="routingKey">Routing key для фильтрации событий.</param>
+    /// <param name="exchangeName">Имя topic exchange.</param>
+    /// <param name="handleEvent">Асинхронный обработчик события.</param>
+    /// <returns>Задача подписки.</returns>
     public async Task SubscribeAsync<T>(string name, string routingKey, string exchangeName, Func<T, Task> handleEvent)
     {
         var channel = await _channelTask;

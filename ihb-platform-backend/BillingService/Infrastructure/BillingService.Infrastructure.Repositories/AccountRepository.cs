@@ -5,10 +5,17 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BillingService.Infrastructure.Repositories;
 
+/// <summary>
+/// Репозиторий для управления операциями сохранения счетов.
+/// </summary>
 public class AccountRepository : IAccountRepository
 {
     private readonly BillingDbContext _context;
 
+    /// <summary>
+    /// Инициализирует новый экземпляр класса <see cref="AccountRepository"/>.
+    /// </summary>
+    /// <param name="context">Контекст базы данных выставления счетов.</param>
     public AccountRepository(BillingDbContext context)
     {
         _context = context;

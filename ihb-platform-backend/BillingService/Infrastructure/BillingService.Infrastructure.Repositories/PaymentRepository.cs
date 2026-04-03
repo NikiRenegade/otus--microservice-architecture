@@ -4,10 +4,17 @@ using BillingService.Infrastructure.EntityFramework.Contexts;
 
 namespace BillingService.Infrastructure.Repositories;
 
+/// <summary>
+/// Репозиторий для управления операциями сохранения записей о платежах.
+/// </summary>
 public class PaymentRepository : IPaymentRepository
 {
     private readonly BillingDbContext _context;
 
+    /// <summary>
+    /// Инициализирует новый экземпляр класса <see cref="PaymentRepository"/>.
+    /// </summary>
+    /// <param name="context">Контекст базы данных выставления счетов.</param>
     public PaymentRepository(BillingDbContext context)
     {
         _context = context;

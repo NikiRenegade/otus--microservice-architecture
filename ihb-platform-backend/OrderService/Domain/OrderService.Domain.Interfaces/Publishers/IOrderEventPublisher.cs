@@ -3,5 +3,10 @@ namespace OrderService.Domain.Interfaces.Publishers;
 
 public interface IOrderEventPublisher
 {
-    public Task PublishOrderCompleted(OrderСompletedEvent userCreatedEvent);
+    /// <summary>
+    /// Публикует событие завершения заказа.
+    /// </summary>
+    /// <param name="userCreatedEvent">Событие о завершению заказа для публикации.</param>
+    /// <returns>Объект, репрезентирующий асинхронную операцию.</returns>
+    Task PublishOrderCompleted(OrderСompletedEvent userCreatedEvent);
 }

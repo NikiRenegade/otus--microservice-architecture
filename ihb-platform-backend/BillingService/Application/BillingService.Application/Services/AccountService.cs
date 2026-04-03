@@ -5,11 +5,19 @@ using BillingService.Domain.Interfaces.Services;
 
 namespace BillingService.Application.Services;
 
+/// <summary>
+/// Сервис для управления операциями счета, включая пополнения, снятия и информацию о счете.
+/// </summary>
 public class AccountService : IAccountService
 {
     private readonly IAccountRepository _accountRepository;
     private readonly IPaymentRepository _paymentRepository;
 
+    /// <summary>
+    /// Инициализирует новый экземпляр класса <see cref="AccountService"/>.
+    /// </summary>
+    /// <param name="accountRepository">Репозиторий счетов для доступа к данным.</param>
+    /// <param name="paymentRepository">Репозиторий платежей для записи транзакций.</param>
     public AccountService(IAccountRepository accountRepository, IPaymentRepository paymentRepository)
     {
         _accountRepository = accountRepository;
