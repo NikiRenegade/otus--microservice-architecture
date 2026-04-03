@@ -41,11 +41,17 @@ spec:
             - name: RabbitMQ__Port
               value: {{ $.Values.rabbitmq.port | quote }}
             - name: RabbitMQ__UserName
-              value: {{ $.Values.rabbitmq.username | quote }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ $.Values.rabbitmq.secretName }}
+                  key: username
             - name: RabbitMQ__Password
-              value: {{ $.Values.rabbitmq.password | quote }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ $.Values.rabbitmq.secretName }}
+                  key: password
             {{- end }}
-          
+
           envFrom:
             {{- if ne $name "gatewayservice" }}
             - secretRef:

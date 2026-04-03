@@ -4,28 +4,32 @@ services:
     port: 8000
 
   userservice:
-    image: nikirenegade/ihb-userservice:1.0.4-api
+    image: nikirenegade/ihb-userservice:1.0.5-api
     port: 8000
+    rabbitmq: true
     migration:
       enabled: true
       image: nikirenegade/ihb-userservice:1.0.0-migration
   billingservice:
-    image: nikirenegade/ihb-billingservice:1.0.0
+    image: nikirenegade/ihb-billingservice:1.0.0-api
     port: 8000
+    rabbitmq: true
     migration:
       enabled: true
       image: nikirenegade/ihb-billingservice:1.0.0-migration
 
   orderservice:
-    image: nikirenegade/ihb-orderservice:1.0.0
+    image: nikirenegade/ihb-orderservice:1.0.4-api
     port: 8000
+    rabbitmq: true
     migration:
       enabled: true
       image: nikirenegade/ihb-orderservice:1.0.0-migration
 
   notificationservice:
-    image: nikirenegade/ihb-notificationservice:1.0.0
+    image: nikirenegade/ihb-notificationservice:1.0.0-api
     port: 8000
+    rabbitmq: true
     migration:
       enabled: true
       image: nikirenegade/ihb-notificationservice:1.0.0-migration
@@ -40,5 +44,4 @@ jwt:
 rabbitmq:
   host: "rabbitmq"
   port: "5672"
-  username: "admin"
-  password: "admin"
+  secretName: rabbitmq-default-user
