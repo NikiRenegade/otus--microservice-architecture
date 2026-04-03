@@ -1,0 +1,24 @@
+{{- range $name, $service := .Values.services }}
+{{- if and $service.migration $service.migration.enabled }}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ $name }}-migration
+  annotations:
+    "helm.sh/hook": pre-install,pre-upgrade
+    "helm.sh/hook-delete-policy": before-hook-creation
+spec:
+  backoffLimit: 3
+  template:
+    spec:
+      restartPolicy: OnFailure
+      containers:
+        - name: {{ $name }}-migration
+          image: {{ $service.migration.image }}
+          imagePullPolicy: Always
+          envFrom:
+            - secretRef:
+                name: {{ $name }}-secret
+---
+{{- end }}
+{{- end }}

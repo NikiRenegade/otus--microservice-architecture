@@ -1,10 +1,10 @@
-using UserService.Domain.Entities;
-using UserService.Domain.Interfaces.Services;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
 using System.Text;
+using System.Security.Claims;
+using System.IdentityModel.Tokens.Jwt;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
+using UserService.Domain.Entities;
+using UserService.Domain.Interfaces.Services;
 
 namespace UserService.Infrastructure.Services;
 
@@ -33,7 +33,7 @@ public class JwtTokenService : IJwtTokenService
 
         var token = new JwtSecurityToken(
             issuer: _configuration["Jwt:Issuer"],
-            audience: _configuration["Jwt:Audience"],
+            audience: _configuration.GetSection("Jwt:Audiences").Get<string[]>()?[0],
             claims: claims,
             expires: DateTime.UtcNow.AddMinutes(15),
             signingCredentials: creds

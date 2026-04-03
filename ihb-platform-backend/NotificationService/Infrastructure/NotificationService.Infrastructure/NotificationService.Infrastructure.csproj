@@ -1,6 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\Shared\Shared.RabbitMq\Shared.RabbitMq.csproj" />
     <ProjectReference Include="..\..\Application\NotificationService.Application\NotificationService.Application.csproj" />
   </ItemGroup>
 

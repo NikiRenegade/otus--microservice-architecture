@@ -43,10 +43,10 @@ public class AccountRepository : IAccountRepository
             .FirstOrDefaultAsync(x => x.UserEmail == email);
     }
 
-    public async Task<bool> UpdateAsync(Guid id, Account account)
+    public async Task<bool> UpdateAsync(Guid UserId, Account account)
     {
         var existingAccount = await _context.Accounts
-            .FirstOrDefaultAsync(u => u.UserId == id);
+            .FirstOrDefaultAsync(u => u.UserId == UserId);
         if (existingAccount == null)
             return false;
         existingAccount.UserEmail = account.UserEmail;
@@ -54,10 +54,10 @@ public class AccountRepository : IAccountRepository
         await _context.SaveChangesAsync();
         return true;
     }
-    public async Task<bool> UpdateEmailAsync(Guid id, string email)
+    public async Task<bool> UpdateEmailAsync(Guid userId, string email)
     {
         var existingAccount = await _context.Accounts
-            .FirstOrDefaultAsync(u => u.UserId == id);
+            .FirstOrDefaultAsync(u => u.UserId == userId);
         if (existingAccount == null)
             return false;
         existingAccount.UserEmail = email;
@@ -66,10 +66,10 @@ public class AccountRepository : IAccountRepository
     }
 
 
-    public async Task<bool> DeleteAsync(Guid id)
+    public async Task<bool> DeleteAsync(Guid userId)
     {
         var existingAccount = await _context.Accounts
-            .FirstOrDefaultAsync(u => u.UserId == id);
+            .FirstOrDefaultAsync(u => u.UserId == userId);
         if (existingAccount == null)
             return false;
         _context.Accounts.Remove(existingAccount);

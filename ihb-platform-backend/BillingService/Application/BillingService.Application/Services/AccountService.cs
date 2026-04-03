@@ -8,10 +8,12 @@ namespace BillingService.Application.Services;
 public class AccountService : IAccountService
 {
     private readonly IAccountRepository _accountRepository;
+    private readonly IPaymentRepository _paymentRepository;
 
-    public AccountService(IAccountRepository accountRepository)
+    public AccountService(IAccountRepository accountRepository, IPaymentRepository paymentRepository)
     {
         _accountRepository = accountRepository;
+        _paymentRepository = paymentRepository;
     }
     
     
@@ -76,32 +78,73 @@ public class AccountService : IAccountService
             {UserEmail = email});
     }
 
-    public async Task<bool> DepositAsync(Guid id, decimal amount)
+    public async Task<(bool Success, Guid PaymentId)> DepositAsync(Guid userId, decimal amount)
     {
-         var account = await _accountRepository.GetByUserIdAsync(id);
+         var account = await _accountRepository.GetByUserIdAsync(userId);
         
             if (account == null)
-                return false;
+                return (false, Guid.Empty);
         
             account.Balance += amount;
 
-            return await _accountRepository.UpdateAsync(id, account);
+            var result =  await _accountRepository.UpdateAsync(userId, account);
+
+            var payment = new Payment
+            {
+                Id = Guid.NewGuid(),
+                UserId = userId,
+                Amount = amount,
+                Type = PaymentType.Deposit,
+                Status = result ? PaymentStatus.Success : PaymentStatus.Failed,
+                CreatedAt = DateTime.UtcNow
+            };
+
+            await _paymentRepository.AddAsync(payment);
+
+            return (result, payment.Id);
     }
 
-    public async Task<bool> WithdrawAsync(Guid id, decimal amount)
+    public async Task<(bool Success, Guid PaymentId)> WithdrawAsync(Guid userId, decimal amount)
     {
-        var account = await _accountRepository.GetByUserIdAsync(id);
+        var account = await _accountRepository.GetByUserIdAsync(userId);
         
         if (account == null)
-            return false;
+            return (false, Guid.Empty);
         
-        account.Balance -= amount;
-        if (account.Balance <= 0)
+        if (account.Balance < amount)
         {
-            return false;
+            var failedPayment = new Payment
+            {
+                Id = Guid.NewGuid(),
+                UserId = userId,
+                Amount = amount,
+                Type = PaymentType.Withdraw,
+                Status = PaymentStatus.Failed,
+                CreatedAt = DateTime.UtcNow
+            };
+
+            await _paymentRepository.AddAsync(failedPayment);
+
+            return (false, failedPayment.Id);
         }
 
-        return await _accountRepository.UpdateAsync(id, account);
+        account.Balance -= amount;
+
+        await _accountRepository.UpdateAsync(userId, account);
+
+        var payment = new Payment
+        {
+            Id = Guid.NewGuid(),
+            UserId = userId,
+            Amount = amount,
+            Type = PaymentType.Withdraw,
+            Status = PaymentStatus.Failed,
+            CreatedAt = DateTime.UtcNow
+        };
+
+        await _paymentRepository.AddAsync(payment);
+
+        return (true, payment.Id);
     }
 
     public async Task<bool> DeleteAsync(Guid id)

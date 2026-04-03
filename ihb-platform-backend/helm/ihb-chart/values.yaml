@@ -1,0 +1,44 @@
+services:
+  gatewayservice:
+    image: nikirenegade/ihb-gatewayservice:1.0.3
+    port: 8000
+
+  userservice:
+    image: nikirenegade/ihb-userservice:1.0.4-api
+    port: 8000
+    migration:
+      enabled: true
+      image: nikirenegade/ihb-userservice:1.0.0-migration
+  billingservice:
+    image: nikirenegade/ihb-billingservice:1.0.0
+    port: 8000
+    migration:
+      enabled: true
+      image: nikirenegade/ihb-billingservice:1.0.0-migration
+
+  orderservice:
+    image: nikirenegade/ihb-orderservice:1.0.0
+    port: 8000
+    migration:
+      enabled: true
+      image: nikirenegade/ihb-orderservice:1.0.0-migration
+
+  notificationservice:
+    image: nikirenegade/ihb-notificationservice:1.0.0
+    port: 8000
+    migration:
+      enabled: true
+      image: nikirenegade/ihb-notificationservice:1.0.0-migration
+
+jwt:
+  key: "super_secret_key_12345_super_secret_key_67890"
+  issuer: "ihbplatform"
+  audiences:
+    - "ihbplatform"
+    - "internal"
+
+rabbitmq:
+  host: "rabbitmq"
+  port: "5672"
+  username: "admin"
+  password: "admin"

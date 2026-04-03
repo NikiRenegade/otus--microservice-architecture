@@ -7,11 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="DTOs\" />
-    <Folder Include="Entities\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <None Remove="Entities\.gitkeep" />
   </ItemGroup>
 

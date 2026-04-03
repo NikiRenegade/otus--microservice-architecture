@@ -11,10 +11,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Consumers\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <None Remove="Services\.gitkeep" />
     <None Remove="Repositories\.gitkeep" />
   </ItemGroup>

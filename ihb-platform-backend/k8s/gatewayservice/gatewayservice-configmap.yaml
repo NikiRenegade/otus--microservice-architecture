@@ -1,3 +1,4 @@
+# ConfigMap с переменными окружения для gatewayservice (URL, среда исполнения и прочие настройки)
 apiVersion: v1
 kind: ConfigMap
 metadata:

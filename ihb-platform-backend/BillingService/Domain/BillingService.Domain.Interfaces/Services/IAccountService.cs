@@ -53,7 +53,7 @@ public interface IAccountService
     /// <param name="id">Идентификатор пользователя пополняемого аккаунта.</param>
     /// <param name="amount">Сумма пополнения</param>
     /// <returns><c>true</c>, если пополнение выполнено; иначе <c>false</c>.</returns>
-    Task<bool> DepositAsync(Guid id, decimal amount);
+    Task<(bool Success, Guid PaymentId)> DepositAsync(Guid userId, decimal amount);
     
     /// <summary>
     /// 
@@ -61,7 +61,7 @@ public interface IAccountService
     /// <param name="id"></param>
     /// <param name="amount"></param>
     /// <returns></returns>
-    Task<bool> WithdrawAsync(Guid id, decimal amount);
+    Task<(bool Success, Guid PaymentId)> WithdrawAsync(Guid userId, decimal amount);
 
     /// <summary>
     /// Удаляет аккаунт по идентификатору.

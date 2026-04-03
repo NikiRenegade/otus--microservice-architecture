@@ -34,7 +34,9 @@ builder.Services.AddAuthentication(options =>
             ValidIssuer = builder.Configuration["Jwt:Issuer"],
 
             ValidateAudience = true,
-            ValidAudience = builder.Configuration["Jwt:Audience"],
+            ValidAudiences = builder.Configuration
+                .GetSection("Jwt:Audiences")
+                .Get<string[]>(),
 
             ValidateIssuerSigningKey = true,
             IssuerSigningKey = new SymmetricSecurityKey(
@@ -43,13 +45,18 @@ builder.Services.AddAuthentication(options =>
             ValidateLifetime = true
         };
     });
-builder.Services.AddAuthorization();
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("ServiceOnly", policy =>
+        policy.RequireClaim("type", "service")
+            .RequireClaim("scope", "billing.internal"));
+});
 
 // ===== Controllers + OpenAPI =====
 builder.Services.AddControllers();
 builder.Services.AddSwaggerGen(c =>
 {
-    c.SwaggerDoc("v1", new OpenApiInfo { Title = "UserService API", Version = "v1" });
+    c.SwaggerDoc("v1", new OpenApiInfo { Title = "BillingService API", Version = "v1" });
     
     c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
@@ -78,13 +85,12 @@ builder.Services.AddSwaggerGen(c =>
 });
 
 
-builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
 
 
 // Repositories
 builder.Services.AddScoped<IAccountRepository, AccountRepository>();
+builder.Services.AddScoped<IPaymentRepository, PaymentRepository>();
 
 // Services
 builder.Services.AddScoped<IAccountService, AccountService>();

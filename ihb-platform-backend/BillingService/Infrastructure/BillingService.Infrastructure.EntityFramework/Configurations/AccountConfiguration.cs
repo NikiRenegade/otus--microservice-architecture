@@ -8,11 +8,21 @@ public class AccountConfiguration : IEntityTypeConfiguration<Account>
 {
     public void Configure(EntityTypeBuilder<Account> builder)
     {
-        builder.HasKey(x => x.UserId);
+        builder.ToTable("Accounts");
+
+        builder.HasKey(x => x.Id);
+
+        builder.Property(x => x.UserId)
+            .IsRequired();
+
+        builder.HasIndex(x => x.UserId)
+            .IsUnique();
+
         builder.Property(x => x.UserEmail)
             .HasMaxLength(256)
             .IsRequired();
+
         builder.Property(x => x.Balance)
-            .IsRequired();
+            .HasColumnType("decimal(18,2)");
     }
 }

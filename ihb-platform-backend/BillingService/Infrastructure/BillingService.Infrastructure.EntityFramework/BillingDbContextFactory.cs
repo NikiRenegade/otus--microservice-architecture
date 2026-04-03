@@ -1,7 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Configuration.EnvironmentVariables;
 using BillingService.Infrastructure.EntityFramework.Contexts;
 
 namespace BillingService.Infrastructure.EntityFramework
@@ -29,7 +28,7 @@ namespace BillingService.Infrastructure.EntityFramework
             if (string.IsNullOrWhiteSpace(connectionString))
             {
                 throw new InvalidOperationException(
-                    "Установите переменную окружения ConnectionStrings__billingbconnection."
+                    "Установите переменную окружения ConnectionStrings__billingdbconnection."
                 );
             }
 

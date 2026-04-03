@@ -1,7 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Configuration.EnvironmentVariables; // <- вот это обязательно
 using UserService.Infrastructure.EntityFramework.Contexts;
 
 namespace UserService.Infrastructure.EntityFramework

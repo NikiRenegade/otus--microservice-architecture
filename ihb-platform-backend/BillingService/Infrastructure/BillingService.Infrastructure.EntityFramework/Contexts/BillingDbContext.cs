@@ -1,4 +1,5 @@
 using BillingService.Domain.Entities;
+using BillingService.Infrastructure.EntityFramework.Configurations;
 using Microsoft.EntityFrameworkCore;
 
 namespace BillingService.Infrastructure.EntityFramework.Contexts;
@@ -6,6 +7,7 @@ namespace BillingService.Infrastructure.EntityFramework.Contexts;
 public class BillingDbContext : DbContext
 {
     public DbSet<Account> Accounts => Set<Account>();
+    public DbSet<Payment> Payments => Set<Payment>();
 
     public BillingDbContext(DbContextOptions<BillingDbContext> options)
         : base(options)
@@ -13,6 +15,7 @@ public class BillingDbContext : DbContext
     }
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.ApplyConfigurationsFromAssembly(typeof(BillingDbContext).Assembly);
+        modelBuilder.ApplyConfiguration<Account>(new AccountConfiguration());
+        modelBuilder.ApplyConfiguration<Payment>(new PaymentConfiguration());
     }
 }

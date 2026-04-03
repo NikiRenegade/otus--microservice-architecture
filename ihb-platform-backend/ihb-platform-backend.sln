@@ -107,6 +107,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Presentation", "Presentatio
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NotificationService.Presentation.API", "NotificationService\Presentation\NotificationService.Presentation.API\NotificationService.Presentation.API.csproj", "{EF7DA396-B165-4787-8F24-EC0719F90197}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Shared.ServiceToken", "Shared\Shared.ServiceToken\Shared.ServiceToken.csproj", "{8E1B4CFD-8C88-4174-BBF4-E0E2272D975F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -477,6 +479,18 @@ Global
 		{EF7DA396-B165-4787-8F24-EC0719F90197}.Release|x64.Build.0 = Release|Any CPU
 		{EF7DA396-B165-4787-8F24-EC0719F90197}.Release|x86.ActiveCfg = Release|Any CPU
 		{EF7DA396-B165-4787-8F24-EC0719F90197}.Release|x86.Build.0 = Release|Any CPU
+		{8E1B4CFD-8C88-4174-BBF4-E0E2272D975F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8E1B4CFD-8C88-4174-BBF4-E0E2272D975F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8E1B4CFD-8C88-4174-BBF4-E0E2272D975F}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{8E1B4CFD-8C88-4174-BBF4-E0E2272D975F}.Debug|x64.Build.0 = Debug|Any CPU
+		{8E1B4CFD-8C88-4174-BBF4-E0E2272D975F}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{8E1B4CFD-8C88-4174-BBF4-E0E2272D975F}.Debug|x86.Build.0 = Debug|Any CPU
+		{8E1B4CFD-8C88-4174-BBF4-E0E2272D975F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8E1B4CFD-8C88-4174-BBF4-E0E2272D975F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8E1B4CFD-8C88-4174-BBF4-E0E2272D975F}.Release|x64.ActiveCfg = Release|Any CPU
+		{8E1B4CFD-8C88-4174-BBF4-E0E2272D975F}.Release|x64.Build.0 = Release|Any CPU
+		{8E1B4CFD-8C88-4174-BBF4-E0E2272D975F}.Release|x86.ActiveCfg = Release|Any CPU
+		{8E1B4CFD-8C88-4174-BBF4-E0E2272D975F}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -528,5 +542,6 @@ Global
 		{BBD2E6D5-59B7-45A1-98DD-B14DDAF099E4} = {3AA46567-1855-4E39-B032-C3EB6C419C86}
 		{45669EE6-63B1-80F0-AAF0-D16826104A82} = {0BAE62A9-2200-0262-2CB5-8EE825167370}
 		{EF7DA396-B165-4787-8F24-EC0719F90197} = {45669EE6-63B1-80F0-AAF0-D16826104A82}
+		{8E1B4CFD-8C88-4174-BBF4-E0E2272D975F} = {4F52FD11-658E-A102-6CD3-7D7C16FFA15B}
 	EndGlobalSection
 EndGlobal

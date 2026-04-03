@@ -1,0 +1,60 @@
+{{- range $name, $service := .Values.services }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ $name }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ $name }}
+  template:
+    metadata:
+      labels:
+        app: {{ $name }}
+    spec:
+      containers:
+        - name: {{ $name }}
+          image: {{ $service.image }}
+          ports:
+            - containerPort: {{ $service.port }}
+
+          env:
+            - name: ASPNETCORE_URLS
+              value: "http://+:{{ $service.port }}"
+            - name: ASPNETCORE_ENVIRONMENT
+              value: "Production"
+
+            - name: Jwt__Key
+              value: {{ $.Values.jwt.key | quote }}
+            - name: Jwt__Issuer
+              value: {{ $.Values.jwt.issuer | quote }}
+            - name: Jwt__Audiences__0
+              value: {{ index $.Values.jwt.audiences 0 | quote }}
+            - name: Jwt__Audiences__1
+              value: {{ index $.Values.jwt.audiences 1 | quote }}
+
+            # RabbitMQ
+            {{- if $service.rabbitmq }}
+            - name: RabbitMQ__HostName
+              value: {{ $.Values.rabbitmq.host | quote }}
+            - name: RabbitMQ__Port
+              value: {{ $.Values.rabbitmq.port | quote }}
+            - name: RabbitMQ__UserName
+              value: {{ $.Values.rabbitmq.username | quote }}
+            - name: RabbitMQ__Password
+              value: {{ $.Values.rabbitmq.password | quote }}
+            {{- end }}
+          
+          envFrom:
+            {{- if ne $name "gatewayservice" }}
+            - secretRef:
+                name: {{ $name }}-secret
+            {{- end }}
+
+            {{- if eq $name "gatewayservice" }}
+            - configMapRef:
+                name: gateway-config
+            {{- end }}
+---
+{{- end }}

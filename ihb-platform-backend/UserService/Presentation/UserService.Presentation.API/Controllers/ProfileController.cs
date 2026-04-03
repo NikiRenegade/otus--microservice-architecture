@@ -10,7 +10,7 @@ namespace UserService.Presentation.API.Controllers;
 
 [Authorize]
 [ApiController]
-[Route("api/profile")]
+[Route("api/[controller]")]
 public class ProfileController : ControllerBase
 {
 

@@ -5,12 +5,9 @@ set -e
 SERVICE_NAME="NotificationService"
 DOTNET_VERSION="net9.0"
 SOLUTION_NAME="ihb-platform-backend"
-ROOT_DIR="ihb-platform-backend"
 # ==========================
 
 echo "Adding service: $SERVICE_NAME"
-
-cd "$ROOT_DIR"
 
 # ================= SERVICE FOLDER =================
 mkdir -p "$SERVICE_NAME"
@@ -25,10 +22,10 @@ dotnet new classlib \
   
 mkdir -p Application/$SERVICE_NAME.Application/Mappers
 mkdir -p Application/$SERVICE_NAME.Application/Services
-
+mkdir -p Application/$SERVICE_NAME.Application/DTOs
 touch Application/$SERVICE_NAME.Application/Mappers/.gitkeep
 touch Application/$SERVICE_NAME.Application/Services/.gitkeep
-
+touch Application/$SERVICE_NAME.Application/DTOs/.gitkeep
 # ================= Domain =================
 mkdir -p Domain
 dotnet new classlib \
@@ -36,10 +33,8 @@ dotnet new classlib \
   -f "$DOTNET_VERSION" \
   -o "Domain/$SERVICE_NAME.Domain"
 
-mkdir -p Domain/$SERVICE_NAME.Domain/DTOs
 mkdir -p Domain/$SERVICE_NAME.Domain/Entities
 
-touch Domain/$SERVICE_NAME.Domain/DTOs/.gitkeep
 touch Domain/$SERVICE_NAME.Domain/Entities/.gitkeep
 
 dotnet new classlib \
@@ -80,8 +75,6 @@ touch Infrastructure/$SERVICE_NAME.Infrastructure.EntityFramework/Contexts/.gitk
 touch Infrastructure/$SERVICE_NAME.Infrastructure.EntityFramework/Migrations/.gitkeep
 
 dotnet new classlib \
-
-dotnet new classlib \
   -n "$SERVICE_NAME.Infrastructure.Repositories" \
   -f "$DOTNET_VERSION" \
   -o "Infrastructure/$SERVICE_NAME.Infrastructure.Repositories"
@@ -111,6 +104,9 @@ dotnet sln "$SOLUTION_NAME.sln" add "$SERVICE_NAME/Presentation/$SERVICE_NAME.Pr
 
 # ================= REFERENCES =================
 
+dotnet add "$SERVICE_NAME/Domain/$SERVICE_NAME.Infrastructure" reference \
+  "$SERVICE_NAME/Domain/$SERVICE_NAME.Domain.Interfaces"
+
 dotnet add "$SERVICE_NAME/Application/$SERVICE_NAME.Application" reference \
   "$SERVICE_NAME/Domain/$SERVICE_NAME.Domain" \
   "$SERVICE_NAME/Domain/$SERVICE_NAME.Domain.Interfaces"
@@ -128,6 +124,6 @@ dotnet add "$SERVICE_NAME/Infrastructure/$SERVICE_NAME.Infrastructure.Repositori
 
 dotnet add "$SERVICE_NAME/Presentation/$SERVICE_NAME.Presentation.API" reference \
   "$SERVICE_NAME/Application/$SERVICE_NAME.Application" \
-  "$SERVICE_NAME/Infrastructure/$SERVICE_NAME.Infrastructure.Repositories"
+  "$SERVICE_NAME/Infrastructure/$SERVICE_NAME.Infrastructure"
 
 echo "Service $SERVICE_NAME successfully added to $SOLUTION_NAME.sln"
