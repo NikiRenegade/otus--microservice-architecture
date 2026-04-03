@@ -1,52 +1,78 @@
 # IHB Platform
 
-Платформа на основе микросервисов. Проект построен на ASP.NET Core 9, использует Kubernetes для оркестрации и **Helm** для управления частями инфраструктуры.
-
----
+Платформа на основе микросервисов. Проект построен на ASP.NET Core 9. Используется Kubernetes для оркестрации и Helm для управления частями инфраструктуры.
 
 ## Структура проекта
 
 ```
-ihb-platform/
-├── UserService/           # Микросервис управления пользователями
-├── GatewayService/        # API Gateway с JWT аутентификацией (маршрутизация запросов)
-├── k8s/                   # Kubernetes манифесты для развёртывания
-├── helm/                  # Helm чарты для инфраструктуры
-└── postman-collection/    # Postman коллекции для тестирования
+ihb-platform-backend/
+├── UserService/                    # Микросервис управления пользователями
+├── BillingService/                 # Микросервис управления биллингом
+├── OrderService/                   # Микросервис управления заказами
+├── NotificationService/             # Микросервис отправки уведомлений
+├── GatewayService/                 # API Gateway (точка входа)
+├── Shared/                         # Общие библиотеки
+├── helm/                           # Helm чарты для развёртывания
+├── k8s/                            # Kubernetes манифесты
+└── postman-collection/             # Postman коллекции для тестирования
 ```
 
 ---
 
-### Стек технологий
+## Стек технологий
 
-- **Framework**: ASP.NET Core 9
-- **ORM**: Entity Framework Core с миграциями
-- **СУБД**: PostgreSQL
-- **Оркестрация**: Kubernetes
-- **Package Manager**: Helm
+| Компонент                   | Технология                       |
+| --------------------------- | -------------------------------- |
+| **Framework**               | ASP.NET Core 9                   |
+| **Language Runtime**        | .NET 9                           |
+| **ORM**                     | Entity Framework Core            |
+| **БД**                      | PostgreSQL                       |
+| **Message Broker**          | RabbitMQ                         |
+| **Оркестрация**             | Kubernetes                       |
+| **Package Manager для K8s** | Helm                             |
+| **Мониторинг**              | Prometheus + Grafana             |
+| **Ingress Controller**      | ingress-nginx                    |
+| **API Gateway**             | YARP (Yet Another Reverse Proxy) |
+| **Аутентификация**          | JWT Bearer tokens                |
 
-## Развертывание
+## Процесс развёртывания
 
-### Шаг 1: Установка ingress-nginx контроллера
+Для разворачивания платформы скопируйте папки k8s и helm на ВМ.
+
+### Этап 0: Подготовка окружения
+
+Перейдите в папку в которую было скопированы k8s и helm
+
+```bash
+cd ...
+```
+
+### Этап 1: Подготовка окружения
 
 ```bash
 # Создайте namespace для ingress-nginx
-kubectl create namespace ingress-nginx
+kubectl create namespace ihb-platform
+```
 
-# Добавьте репозиторий и установите ingress-nginx
-helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx/
+### Этап 2: Установка системных компонентов
+
+#### 2.1 Установка ingress-nginx
+
+```bash
+# Добавьте репозиторий
+helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
 helm repo update
 
-# Установите контроллер
+# Установите ingress-nginx
 helm install nginx ingress-nginx/ingress-nginx \
   --namespace ingress-nginx \
   -f helm/ingress-nginx-values.yaml
 ```
 
-### Шаг 2: Установка Prometheus и Grafana
+#### 2.2 Установка Prometheus + Grafana (мониторинг)
 
 ```bash
-# Добавьте репозиторий Prometheus
+# Добавьте репозиторий
 helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
 helm repo update
 
@@ -55,7 +81,7 @@ helm install stack prometheus-community/kube-prometheus-stack \
   -f helm/prometheus-values.yaml
 ```
 
-#### Настройка доступа к Prometheus и Grafana
+#### 2.3 Конфигурация доступа к Prometheus и Grafana
 
 ```bash
 # Создайте Ingress для Prometheus
@@ -64,28 +90,180 @@ kubectl apply -f k8s/monitoring/monitoring-prometheus-ingress.yaml
 # Создайте Ingress для Grafana
 kubectl apply -f k8s/monitoring/monitoring-grafana-ingress.yaml
 
-# Создайте Service для сбора метрик nginx-ingress контроллера
+# Создайте Service и ServiceMonitor для сбора метрик nginx
 kubectl apply -f k8s/ingress-nginx/ingress-nginx-service.yaml
-
-# Создайте ServiceMonitor для nginx-ingress
 kubectl apply -f k8s/ingress-nginx/ingress-nginx-servicemonitor.yaml
 ```
 
-### Шаг 4: Развёртывание микросервисов
+#### 2.4 Установка RabbitMQ (message broker)
 
-Каждый микросервис содержит свою инструкцию по развёртыванию:
+```bash
+# Установите оператор
+kubectl apply -f "https://github.com/rabbitmq/cluster-operator/releases/latest/download/cluster-operator.yml"
 
-1. **[UserService инструкция по развёртыванию](./UserService/README.md#развёртывание)** - создание БД, миграции, развёртывание сервиса
-2. **[GatewayService инструкция по развёртыванию](./GatewayService/README.md#развёртывание)** - настройка шлюза и маршрутизации
+# Развертывание RabbitMQ в кластере
+kubectl apply -f k8s/rabbitmq/rabbitmq.yaml
+
+# Создание Ingress для доступа к RabbitMQ Management UI
+kubectl apply -f k8s/rabbitmq/rabbitmq-ingress.yaml
+```
+
+### Этап 3: Развёртывание PostgreSQL для каждого сервиса
+
+```bash
+# Добавьте репозиторий Bitnami
+helm repo add bitnami https://charts.bitnami.com/bitnami
+helm repo update
+
+# Установите PostgreSQL для UserService
+helm install users-postgres bitnami/postgresql \
+  -f helm/db/usersdb-postgres-values.yaml
+
+# Установите PostgreSQL для OrderService
+helm install orders-postgres bitnami/postgresql \
+  -f helm/db/ordersdb-postgres-values.yaml
+
+# Установите PostgreSQL для BillingService
+helm install billing-postgres bitnami/postgresql \
+  -f helm/db/billingsdb-postgres-values.yaml
+
+# Установите PostgreSQL для NotificationService
+helm install notifications-postgres bitnami/postgresql \
+  -f helm/db/notoficationsdb-postgres-values.yaml
+```
+
+### Этап 4: Развёртывание configmap и secrets
+
+```bash
+# Разверните confiigmap для GatewayService
+kubectl apply -f helm/ihb-chart/templates/configMaps/gateway-configmap.yaml
+
+
+# Разверните secret (строка подключения к бд) для UserService
+kubectl apply -f helm/ihb-chart/templates/secrets/userservice-secret.yaml
+
+# Разверните secret (строка подключения к бд) для OrderService
+kubectl apply -f helm/ihb-chart/templates/secrets/orderservice-secret.yaml
+
+# Разверните secret (строка подключения к бд) для BillingService
+kubectl apply -f helm/ihb-chart/templates/secrets/billingservice-secret.yaml
+```
+
+### Этап 5: Развёртывание микросервисов
+
+Все микросервисы разворачиваются через один Helm chart:
+
+```bash
+# Разверните микросервисы
+helm install ihb-platform ./helm/ihb-chart
+
+
+# Проверьте статус всех сервисов
+kubectl get pods
+kubectl get svc
+```
+
+### Этап 6: Конфигурация hosts (для использования доменов)
+
+Добавьте в `/etc/hosts` (macOS/Linux):
+
+```
+<ip> ihb-platform.local
+<ip> prometheus.arch.homework
+<ip> grafana.arch.homework
+<ip> rabbitmq.arch.homework
+```
+
+## Микросервисы
+
+### UserService
+
+**Описание**: Управление пользователями и аутентификация
+
+**Функционал**:
+
+- Регистрация новых пользователей
+- Логин и выдача JWT токенов
+- CRUD операции с профилем пользователя
+- Хеширование паролей (Bcrypt/PBKDF2)
+- Отправка уведомлений о создании пользователя через RabbitMQ
+
+**Технологии**: ASP.NET Core 9, Entity Framework Core, PostgreSQL, ASP.NET Identity, RabbitMq
+
+### BillingService
+
+**Описание**: Управление биллингом и платежами
+
+**Функционал**:
+
+- Обработка событий создания пользователя из RabbitMQ
+- Создание и управление счетами
+
+**Технологии**: ASP.NET Core 9, Entity Framework Core, PostgreSQL, RabbitMQ
+
+### OrderService
+
+**Описание**: Управление заказами
+
+**Функционал**:
+
+- Создание заказов
+- Изменение статуса заказа
+- Интеграция с BillingService (http)
+- Отправка уведомлений через RabbitMQ
+
+**Технологии**: ASP.NET Core 9, Entity Framework Core, PostgreSQL, RabbitMQ
+
+### NotificationService
+
+**Описание**: Система уведомлений
+
+**Функционал**:
+
+- Обработка событий из RabbitMQ
+- Хранение истории уведомлений
+
+**Технологии**: ASP.NET Core 9, Entity Framework Core, PostgreSQL, RabbitMQ
+
+### GatewayService
+
+**Описание**: API Gateway (единая точка входа)
+
+**Функционал**:
+
+- Маршрутизация запросов к микросервисам
+- Валидация JWT токенов
+
+**Маршруты**:
+
+| Путь              | Целевой сервис      |
+| ----------------- | ------------------- |
+| `/user/*`         | UserService         |
+| `/order/*`        | OrderService        |
+| `/billing/*`      | BillingService      |
+| `/notification/*` | NotificationService |
+
+**Технологии**: ASP.NET Core 9, YARP, JWT Bearer
 
 ## Мониторинг
 
 ### Prometheus
 
-Метрики сервисов собираются в Prometheus: <http://prometheus.arch.homework>
+Собирает метрики со всех сервисов:
+
+- Доступ: <http://prometheus.arch.homework>
+- Метрики доступны на `/metrics` в каждом сервисе
 
 ### Grafana
 
-Дашборды для визуализации метрик: <http://grafana.arch.homework>
+Визуализация метрик и дашборды:
 
----
+- Доступ: <http://grafana.arch.homework>
+- Стандартные учётные данные обычно: admin/admin
+
+### RabbitMQ Management UI
+
+Управление message broker:
+
+- Доступ: <http://rabbitmq.arch.homework>
+- Данные хранятся в секрете rabbitmq-default-user
