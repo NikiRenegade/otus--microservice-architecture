@@ -12,6 +12,8 @@ COPY ["UserService/Domain/UserService.Domain/UserService.Domain.csproj", "UserSe
 COPY ["UserService/Domain/UserService.Domain.Interfaces/UserService.Domain.Interfaces.csproj", "UserService/Domain/UserService.Domain.Interfaces/"]
 COPY ["UserService/Infrastructure/UserService.Infrastructure.Repositories/UserService.Infrastructure.Repositories.csproj", "UserService/Infrastructure/UserService.Infrastructure.Repositories/"]
 COPY ["UserService/Infrastructure/UserService.Infrastructure.EntityFramework/UserService.Infrastructure.EntityFramework.csproj", "UserService/Infrastructure/UserService.Infrastructure.EntityFramework/"]
+COPY ["UserService/Infrastructure/UserService.Infrastructure/UserService.Infrastructure.csproj", "UserService/Infrastructure/UserService.Infrastructure/"]
+COPY ["Shared/Shared.RabbitMq/Shared.RabbitMq.csproj", "Shared/Shared.RabbitMq/"]
 RUN dotnet restore "UserService/Presentation/UserService.Presentation.API/UserService.Presentation.API.csproj"
 COPY . .
 WORKDIR "/src/UserService/Presentation/UserService.Presentation.API"

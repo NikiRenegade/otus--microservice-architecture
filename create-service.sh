@@ -2,15 +2,12 @@
 set -e
 
 # ========= CONFIG =========
-SERVICE_NAME="UserService"
+SERVICE_NAME="NotificationService"
 DOTNET_VERSION="net9.0"
-SOLUTION_NAME="platform"
-ROOT_DIR="platform"
+SOLUTION_NAME="ihb-platform-backend"
 # ==========================
 
-echo "🚀 Adding service: $SERVICE_NAME"
-
-cd "$ROOT_DIR"
+echo "Adding service: $SERVICE_NAME"
 
 # ================= SERVICE FOLDER =================
 mkdir -p "$SERVICE_NAME"
@@ -22,7 +19,13 @@ dotnet new classlib \
   -n "$SERVICE_NAME.Application" \
   -f "$DOTNET_VERSION" \
   -o "Application/$SERVICE_NAME.Application"
-
+  
+mkdir -p Application/$SERVICE_NAME.Application/Mappers
+mkdir -p Application/$SERVICE_NAME.Application/Services
+mkdir -p Application/$SERVICE_NAME.Application/DTOs
+touch Application/$SERVICE_NAME.Application/Mappers/.gitkeep
+touch Application/$SERVICE_NAME.Application/Services/.gitkeep
+touch Application/$SERVICE_NAME.Application/DTOs/.gitkeep
 # ================= Domain =================
 mkdir -p Domain
 dotnet new classlib \
@@ -30,10 +33,20 @@ dotnet new classlib \
   -f "$DOTNET_VERSION" \
   -o "Domain/$SERVICE_NAME.Domain"
 
+mkdir -p Domain/$SERVICE_NAME.Domain/Entities
+
+touch Domain/$SERVICE_NAME.Domain/Entities/.gitkeep
+
 dotnet new classlib \
   -n "$SERVICE_NAME.Domain.Interfaces" \
   -f "$DOTNET_VERSION" \
   -o "Domain/$SERVICE_NAME.Domain.Interfaces"
+
+mkdir -p Domain/$SERVICE_NAME.Domain.Interfaces/Repositories
+mkdir -p Domain/$SERVICE_NAME.Domain.Interfaces/Services
+
+touch Domain/$SERVICE_NAME.Domain.Interfaces/Repositories/.gitkeep
+touch Domain/$SERVICE_NAME.Domain.Interfaces/Services/.gitkeep
 
 # ================= Infrastructure =================
 mkdir -p Infrastructure
@@ -43,10 +56,23 @@ dotnet new classlib \
   -f "$DOTNET_VERSION" \
   -o "Infrastructure/$SERVICE_NAME.Infrastructure"
 
+mkdir -p Infrastructure/$SERVICE_NAME.Infrastructure/Services
+
+touch Infrastructure/$SERVICE_NAME.Infrastructure/Services/.gitkeep
+
+
 dotnet new classlib \
   -n "$SERVICE_NAME.Infrastructure.EntityFramework" \
   -f "$DOTNET_VERSION" \
   -o "Infrastructure/$SERVICE_NAME.Infrastructure.EntityFramework"
+
+mkdir -p Infrastructure/$SERVICE_NAME.Infrastructure.EntityFramework/Configurations
+mkdir -p Infrastructure/$SERVICE_NAME.Infrastructure.EntityFramework/Contexts
+mkdir -p Infrastructure/$SERVICE_NAME.Infrastructure.EntityFramework/Migrations
+
+touch Infrastructure/$SERVICE_NAME.Infrastructure.EntityFramework/Configurations/.gitkeep
+touch Infrastructure/$SERVICE_NAME.Infrastructure.EntityFramework/Contexts/.gitkeep
+touch Infrastructure/$SERVICE_NAME.Infrastructure.EntityFramework/Migrations/.gitkeep
 
 dotnet new classlib \
   -n "$SERVICE_NAME.Infrastructure.Repositories" \
@@ -61,29 +87,25 @@ dotnet new webapi \
   -o "Presentation/$SERVICE_NAME.Presentation.API" \
   --no-https
 
+mkdir -p Presentation/$SERVICE_NAME.Presentation.API/Controllers
+
+touch Presentation/$SERVICE_NAME.Presentation.API/Controllers/.gitkeep
+
 # ================= ADD TO SOLUTION =================
 cd ..
 
-dotnet sln "$SOLUTION_NAME.sln" add \
-  --solution-folder "$SERVICE_NAME/Application" \
-  "$SERVICE_NAME/Application/$SERVICE_NAME.Application/$SERVICE_NAME.Application.csproj"
-
-dotnet sln "$SOLUTION_NAME.sln" add \
-  --solution-folder "$SERVICE_NAME/Domain" \
-  "$SERVICE_NAME/Domain/$SERVICE_NAME.Domain/$SERVICE_NAME.Domain.csproj" \
-  "$SERVICE_NAME/Domain/$SERVICE_NAME.Domain.Interfaces/$SERVICE_NAME.Domain.Interfaces.csproj"
-
-dotnet sln "$SOLUTION_NAME.sln" add \
-  --solution-folder "$SERVICE_NAME/Infrastructure" \
-  "$SERVICE_NAME/Infrastructure/$SERVICE_NAME.Infrastructure/$SERVICE_NAME.Infrastructure.csproj" \
-  "$SERVICE_NAME/Infrastructure/$SERVICE_NAME.Infrastructure.EntityFramework/$SERVICE_NAME.Infrastructure.EntityFramework.csproj" \
-  "$SERVICE_NAME/Infrastructure/$SERVICE_NAME.Infrastructure.Repositories/$SERVICE_NAME.Infrastructure.Repositories.csproj"
-
-dotnet sln "$SOLUTION_NAME.sln" add \
-  --solution-folder "$SERVICE_NAME/Presentation" \
-  "$SERVICE_NAME/Presentation/$SERVICE_NAME.Presentation.API/$SERVICE_NAME.Presentation.API.csproj"
+dotnet sln "$SOLUTION_NAME.sln" add "$SERVICE_NAME/Application/$SERVICE_NAME.Application/$SERVICE_NAME.Application.csproj"
+dotnet sln "$SOLUTION_NAME.sln" add "$SERVICE_NAME/Domain/$SERVICE_NAME.Domain/$SERVICE_NAME.Domain.csproj"
+dotnet sln "$SOLUTION_NAME.sln" add "$SERVICE_NAME/Domain/$SERVICE_NAME.Domain.Interfaces/$SERVICE_NAME.Domain.Interfaces.csproj"
+dotnet sln "$SOLUTION_NAME.sln" add "$SERVICE_NAME/Infrastructure/$SERVICE_NAME.Infrastructure/$SERVICE_NAME.Infrastructure.csproj"
+dotnet sln "$SOLUTION_NAME.sln" add "$SERVICE_NAME/Infrastructure/$SERVICE_NAME.Infrastructure.EntityFramework/$SERVICE_NAME.Infrastructure.EntityFramework.csproj"
+dotnet sln "$SOLUTION_NAME.sln" add "$SERVICE_NAME/Infrastructure/$SERVICE_NAME.Infrastructure.Repositories/$SERVICE_NAME.Infrastructure.Repositories.csproj"
+dotnet sln "$SOLUTION_NAME.sln" add "$SERVICE_NAME/Presentation/$SERVICE_NAME.Presentation.API/$SERVICE_NAME.Presentation.API.csproj"
 
 # ================= REFERENCES =================
+
+dotnet add "$SERVICE_NAME/Domain/$SERVICE_NAME.Infrastructure" reference \
+  "$SERVICE_NAME/Domain/$SERVICE_NAME.Domain.Interfaces"
 
 dotnet add "$SERVICE_NAME/Application/$SERVICE_NAME.Application" reference \
   "$SERVICE_NAME/Domain/$SERVICE_NAME.Domain" \
@@ -102,6 +124,6 @@ dotnet add "$SERVICE_NAME/Infrastructure/$SERVICE_NAME.Infrastructure.Repositori
 
 dotnet add "$SERVICE_NAME/Presentation/$SERVICE_NAME.Presentation.API" reference \
   "$SERVICE_NAME/Application/$SERVICE_NAME.Application" \
-  "$SERVICE_NAME/Infrastructure/$SERVICE_NAME.Infrastructure.Repositories"
+  "$SERVICE_NAME/Infrastructure/$SERVICE_NAME.Infrastructure"
 
 echo "Service $SERVICE_NAME successfully added to $SOLUTION_NAME.sln"

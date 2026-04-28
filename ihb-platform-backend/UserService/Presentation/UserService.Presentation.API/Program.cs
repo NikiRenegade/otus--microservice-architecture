@@ -10,6 +10,11 @@ using UserService.Domain.Interfaces.Services;
 using UserService.Infrastructure.EntityFramework.Contexts;
 using UserService.Infrastructure.Repositories;
 using OpenTelemetry.Metrics;
+using RabbitMQ.Client;
+using Shared.RabbitMq;
+using Shared.RabbitMq.Interfaces;
+using UserService.Domain.Interfaces.Publishers;
+using UserService.Infrastructure.Messaging;
 using UserService.Infrastructure.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -57,7 +62,9 @@ builder.Services.AddAuthentication(options =>
             ValidIssuer = builder.Configuration["Jwt:Issuer"],
 
             ValidateAudience = true,
-            ValidAudience = builder.Configuration["Jwt:Audience"],
+            ValidAudiences = builder.Configuration
+                .GetSection("Jwt:Audiences")
+                .Get<string[]>(),
 
             ValidateIssuerSigningKey = true,
             IssuerSigningKey = new SymmetricSecurityKey(
@@ -100,6 +107,31 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
+// ===== RabbitMQ =====
+var rabbitConfig = builder.Configuration.GetSection("RabbitMQ");
+builder.Services.AddSingleton(async sp =>
+{
+    var factory = new ConnectionFactory
+    {
+        HostName = rabbitConfig["HostName"],
+        Port = int.Parse(rabbitConfig["Port"]!),
+        UserName = rabbitConfig["UserName"],
+        Password = rabbitConfig["Password"]
+    };
+
+    var connection = await factory.CreateConnectionAsync();
+    return connection;
+});
+
+builder.Services.AddSingleton(async sp =>
+{
+    var connection = await sp.GetRequiredService<Task<IConnection>>();
+    var channel = await connection.CreateChannelAsync();
+    return channel;
+});
+builder.Services.AddScoped<IEventPublisher, RabbitMqEventPublisher>();
+builder.Services.AddScoped<IUserEventPublisher, RabbitMqUserEventPublisher>();
+
 
 // ===== Application Services =====
 builder.Services.AddScoped<IUserService, UserService.Application.Services.UserService>();
@@ -110,6 +142,9 @@ builder.Services.AddScoped<IIdentityService, IdentityService>();
 
 // ===== Repositories =====
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+
+
+
 
 var app = builder.Build();
 

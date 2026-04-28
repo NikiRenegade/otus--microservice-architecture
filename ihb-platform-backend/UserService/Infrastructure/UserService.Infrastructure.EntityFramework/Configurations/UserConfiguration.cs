@@ -4,8 +4,18 @@ using UserService.Domain.Entities;
 
 namespace UserService.Infrastructure.EntityFramework.Configurations;
 
+/// <summary>
+/// Конфигурация для Entity Framework Core для сущности User.
+/// Определяет схему таблицы, ограничения, индексы и свойства.
+/// </summary>
 public sealed class UserConfiguration : IEntityTypeConfiguration<User>
 {
+    /// <summary>
+    /// Конфигурирует сущность User для отображения на таблицу базы данных.
+    /// Устанавливает имя таблицы, первичный ключ, ограничения на длину полей,
+    /// уникальные индексы для Email, UserName и PhoneNumber.
+    /// </summary>
+    /// <param name="builder">Builder для конфигурации сущности User.</param>
     public void Configure(EntityTypeBuilder<User> builder)
     {
         builder.ToTable("Users");

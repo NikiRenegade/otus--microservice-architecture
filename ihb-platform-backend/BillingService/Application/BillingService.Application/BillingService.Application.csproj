@@ -1,0 +1,22 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Domain\BillingService.Domain\BillingService.Domain.csproj" />
+    <ProjectReference Include="..\..\Domain\BillingService.Domain.Interfaces\BillingService.Domain.Interfaces.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="Services\.gitkeep" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Mappers\" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+</Project>
