@@ -14,4 +14,9 @@ public class OrderCreateDto
     /// Коллекция товаров для включения в заказ.
     /// </summary>
     public List<OrderItemDto> Items { get; set; } = new();
+    
+    /// <summary>
+    /// Время к которому необходимо доставить заказ
+    /// </summary>
+    public DateTime TimeSlot { get; set; }
 }

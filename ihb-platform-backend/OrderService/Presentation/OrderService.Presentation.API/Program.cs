@@ -126,6 +126,18 @@ builder.Services.AddHttpClient<IBillingClient, BillingClient>((sp, client) =>
     client.BaseAddress = new Uri(config["Services:Billing:BaseUrl"]);
 });
 
+builder.Services.AddHttpClient<IDeliveryClient, DeliveryClient>((sp, client) =>
+{
+    var config = sp.GetRequiredService<IConfiguration>();
+    client.BaseAddress = new Uri(config["Services:Delivery:BaseUrl"]);
+});
+
+builder.Services.AddHttpClient<IInventoryClient, InventoryClient>((sp, client) =>
+{
+    var config = sp.GetRequiredService<IConfiguration>();
+    client.BaseAddress = new Uri(config["Services:Inventory:BaseUrl"]);
+});
+
 var app = builder.Build();
 
 app.UseSwagger();

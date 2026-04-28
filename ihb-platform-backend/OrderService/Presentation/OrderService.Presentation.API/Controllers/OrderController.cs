@@ -19,7 +19,7 @@ public class OrderController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> Create(IList<OrderItemDto> orderItems)
+    public async Task<IActionResult> Create(IList<OrderItemDto> orderItems, DateTime timeSlot)
     {
         var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
@@ -29,7 +29,8 @@ public class OrderController : ControllerBase
         var orderCreateDto = new OrderCreateDto
         {
             UserId = Guid.Parse(userIdClaim),
-            Items = orderItems.ToList()
+            Items = orderItems.ToList(),
+            TimeSlot = timeSlot
         };
 
         var order = await _orderService.CreateOrder(orderCreateDto);

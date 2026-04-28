@@ -4,8 +4,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Configuration.EnvironmentVariables;
 using OrderService.Infrastructure.EntityFramework.Contexts;
 
-namespace OrderService.Infrastructure.EntityFramework
-{
+namespace OrderService.Infrastructure.EntityFramework;
     /// <summary>
     /// Фабрика контекста БД, используемая на этапе разработки (миграции и т.д.).
     /// Читает строку подключения из переменных окружения и создает <see cref="OrderDbContext"/>.
@@ -14,7 +13,6 @@ namespace OrderService.Infrastructure.EntityFramework
     {
         /// <summary>
         /// Создаёт экземпляр <see cref="OrderDbContext"/>.
-        /// </summary>
         /// <param name="args">Аргументы командной строки (не используются).</param>
         /// <returns>Конфигурированный экземпляр <see cref="OrderDbContext"/>.</returns>
         /// <exception cref="InvalidOperationException">Если строка подключения не найдена в переменных окружения.</exception>
@@ -39,4 +37,3 @@ namespace OrderService.Infrastructure.EntityFramework
             return new OrderDbContext(optionsBuilder.Options);
         }
     }
-}

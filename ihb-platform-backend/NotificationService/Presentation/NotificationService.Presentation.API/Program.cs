@@ -1,9 +1,4 @@
 using System.Text;
-using NotificationService.Domain.Interfaces.Repositories;
-using NotificationService.Domain.Interfaces.Services;
-using NotificationService.Infrastructure.EntityFramework.Contexts;
-using NotificationService.Infrastructure.Repositories;
-using NotificationService.Infrastructure.Messaging;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -11,6 +6,11 @@ using Microsoft.OpenApi.Models;
 using RabbitMQ.Client;
 using Shared.RabbitMq;
 using Shared.RabbitMq.Interfaces;
+using NotificationService.Domain.Interfaces.Repositories;
+using NotificationService.Domain.Interfaces.Services;
+using NotificationService.Infrastructure.EntityFramework.Contexts;
+using NotificationService.Infrastructure.Repositories;
+using NotificationService.Infrastructure.Messaging;
 
 var builder = WebApplication.CreateBuilder(args);
 

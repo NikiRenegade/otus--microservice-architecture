@@ -11,15 +11,21 @@ public class OrderService : IOrderService
 {
     private readonly IOrderRepository _orderRepository;
     private readonly IBillingClient _billing;
+    private readonly IInventoryClient _inventory;
+    private readonly IDeliveryClient _delivery;
     private readonly IOrderEventPublisher _orderEventPublisher;
 
     public OrderService(
         IOrderRepository orderRepository,
         IBillingClient billing,
+        IInventoryClient inventory,
+        IDeliveryClient delivery,
         IOrderEventPublisher orderEventPublisher)
     {
         _orderRepository = orderRepository;
         _billing = billing;
+        _inventory = inventory;
+        _delivery = delivery;
         _orderEventPublisher = orderEventPublisher;
     }
 
@@ -44,19 +50,33 @@ public class OrderService : IOrderService
         order.Price = order.Items.Sum(x => x.Price * x.Quantity);
 
         await _orderRepository.AddAsync(order);
+
+        var reserved = await _inventory.Reserve(order.Id, orderCreateDto.UserId, orderCreateDto.Items);
+
+        if (!reserved)
+        {
+            await Fail(order, "Нет товара на складе");
+            return Map(order);
+        }
         
+        var deliveryReserved = await _delivery.Reserve(order.Id, orderCreateDto.UserId, orderCreateDto.TimeSlot);
+
+        if (!deliveryReserved)
+        {
+            await _inventory.Release(order.Id,  orderCreateDto.UserId);
+            await Fail(order, "Нет доступного курьера");
+            return Map(order);
+        }
+
         var payment = await _billing.Withdraw(order.UserId, order.Price);
 
         if (!payment.Success)
         {
             await _orderRepository.UpdatePaymentAndStatusAsync(order.Id, payment.PaymentId, OrderStatus.Failed);
+            await _inventory.Release(order.Id, orderCreateDto.UserId);
+            await _delivery.Cancel(order.Id, orderCreateDto.UserId);
+            await Fail(order, "Оплата не прошла");
 
-            await _orderEventPublisher.PublishOrderCompleted(new OrderСompletedEvent
-            {
-                UserId = order.UserId,
-                Text = $"Оплата заказа {order.Id} не прошла"
-            });
-            
             orderCreateResponseDto = new OrderCreateResponseDto
             {
                 Id = order.Id,
@@ -68,15 +88,15 @@ public class OrderService : IOrderService
             };
             return orderCreateResponseDto;
         }
-        
+
         await _orderEventPublisher.PublishOrderCompleted(new OrderСompletedEvent
-            {
-                UserId = order.UserId,
-                Text = $"Заказ {order.Id} успешно создан"
-            });
-        
+        {
+            UserId = order.UserId,
+            Text = $"Заказ {order.Id} успешно создан"
+        });
+
         await _orderRepository.UpdatePaymentAndStatusAsync(order.Id, payment.PaymentId, OrderStatus.Completed);
-        
+
         orderCreateResponseDto = new OrderCreateResponseDto
         {
             Id = order.Id,
@@ -86,7 +106,35 @@ public class OrderService : IOrderService
             UserId = order.UserId,
             Status = order.Status.ToString(),
         };
-        
+
         return orderCreateResponseDto;
+    }
+
+    private async Task Fail(Order order, string message)
+    {
+        await _orderRepository.UpdatePaymentAndStatusAsync(
+            order.Id,
+            null,
+            OrderStatus.Failed
+        );
+
+        await _orderEventPublisher.PublishOrderCompleted(new OrderСompletedEvent
+        {
+            UserId = order.UserId,
+            Text = $"Заказ {order.Id} создать не удалось. " + message
+        });
+    }
+    
+    private OrderCreateResponseDto Map(Order order)
+    {
+        return new OrderCreateResponseDto
+        {
+            Id = order.Id,
+            CreatedAt = order.CreatedAt,
+            PaymentId = order.PaymentId,
+            Price = order.Price,
+            UserId = order.UserId,
+            Status = order.Status.ToString()
+        };
     }
 }
