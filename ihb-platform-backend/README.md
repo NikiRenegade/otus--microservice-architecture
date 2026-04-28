@@ -7,9 +7,11 @@
 ```
 ihb-platform-backend/
 ├── UserService/                    # Микросервис управления пользователями
-├── BillingService/                 # Микросервис управления биллингом
+├── DeliveryService/                 # Микросервис управления биллингом
+├── InventoryService/                 # Микросервис управления доставкой
+├── BillingService/                 # Микросервис управления складом
 ├── OrderService/                   # Микросервис управления заказами
-├── NotificationService/             # Микросервис отправки уведомлений
+├── NotificationService/            # Микросервис отправки уведомлений
 ├── GatewayService/                 # API Gateway (точка входа)
 ├── Shared/                         # Общие библиотеки
 ├── helm/                           # Helm чарты для развёртывания
@@ -126,6 +128,14 @@ helm install orders-postgres bitnami/postgresql \
 # Установите PostgreSQL для BillingService
 helm install billing-postgres bitnami/postgresql \
   -f helm/db/billingsdb-postgres-values.yaml
+  
+# Установите PostgreSQL для DeliveryService
+helm install billing-postgres bitnami/postgresql \
+  -f helm/db/deliverysdb-postgres-values.yaml
+  
+# Установите PostgreSQL для InventoryService
+helm install billing-postgres bitnami/postgresql \
+  -f helm/db/inventorysdb-postgres-values.yaml
 
 # Установите PostgreSQL для NotificationService
 helm install notifications-postgres bitnami/postgresql \
@@ -138,7 +148,6 @@ helm install notifications-postgres bitnami/postgresql \
 # Разверните confiigmap для GatewayService
 kubectl apply -f helm/ihb-chart/templates/configMaps/gateway-configmap.yaml
 
-
 # Разверните secret (строка подключения к бд) для UserService
 kubectl apply -f helm/ihb-chart/templates/secrets/userservice-secret.yaml
 
@@ -147,6 +156,15 @@ kubectl apply -f helm/ihb-chart/templates/secrets/orderservice-secret.yaml
 
 # Разверните secret (строка подключения к бд) для BillingService
 kubectl apply -f helm/ihb-chart/templates/secrets/billingservice-secret.yaml
+
+# Разверните secret (строка подключения к бд) для DeliveyService
+kubectl apply -f helm/ihb-chart/templates/secrets/deliveyservice-secret.yaml
+
+# Разверните secret (строка подключения к бд) для InventoryService
+kubectl apply -f helm/ihb-chart/templates/secrets/inventoryservice-secret.yaml
+
+# Разверните secret (строка подключения к бд) для NotificationService
+kubectl apply -f helm/ihb-chart/templates/secrets/notificationservice-secret.yaml
 ```
 
 ### Этап 5: Развёртывание микросервисов
@@ -200,6 +218,27 @@ kubectl get svc
 - Создание и управление счетами
 
 **Технологии**: ASP.NET Core 9, Entity Framework Core, PostgreSQL, RabbitMQ
+
+### DeliveryService
+
+**Описание**: Управление доставкой
+
+**Функционал**:
+
+- Создание и управление слотами доставки
+
+**Технологии**: ASP.NET Core 9, Entity Framework Core, PostgreSQL
+
+### InventoryService
+
+**Описание**: Управление товаром на складе
+
+**Функционал**:
+
+- Создание и управление товарами на складе
+
+**Технологии**: ASP.NET Core 9, Entity Framework Core, PostgreSQL
+
 
 ### OrderService
 

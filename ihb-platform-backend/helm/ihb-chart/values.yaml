@@ -17,7 +17,23 @@ services:
     migration:
       enabled: true
       image: nikirenegade/ihb-billingservice:1.0.0-migration
-
+      
+  deliveryservice:
+    image: nikirenegade/ihb-deliveryservice:1.0.0-api
+    port: 8000
+    rabbitmq: false
+    migration:
+      enabled: true
+      image: nikirenegade/ihb-deliveryservice:1.0.0-migration
+      
+  inventoryservice:
+    image: nikirenegade/ihb-inventoryservice:1.0.0-api
+    port: 8000
+    rabbitmq: false
+    migration:
+      enabled: true
+      image: nikirenegade/ihb-inventoryservice:1.0.0-migration
+      
   orderservice:
     image: nikirenegade/ihb-orderservice:1.0.4-api
     port: 8000

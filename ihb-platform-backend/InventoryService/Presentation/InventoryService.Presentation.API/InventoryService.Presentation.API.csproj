@@ -4,6 +4,7 @@
     <TargetFramework>net9.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
   </PropertyGroup>
 
   <ItemGroup>
@@ -21,6 +22,12 @@
     <ProjectReference Include="..\..\Infrastructure\InventoryService.Infrastructure.EntityFramework\InventoryService.Infrastructure.EntityFramework.csproj" />
     <ProjectReference Include="..\..\Infrastructure\InventoryService.Infrastructure.Repositories\InventoryService.Infrastructure.Repositories.csproj" />
     <ProjectReference Include="..\..\Infrastructure\InventoryService.Infrastructure\InventoryService.Infrastructure.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="..\..\..\.dockerignore">
+      <Link>.dockerignore</Link>
+    </Content>
   </ItemGroup>
 
 </Project>
