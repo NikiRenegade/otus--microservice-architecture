@@ -103,4 +103,17 @@ public class DeliveryService : IDeliveryService
             Courier = new CourierDto { Id = x.Courier.Id, Name = x.Courier.Name }
         }).ToList();
     }
+
+    public async Task<CourierSlotDto> GetCourierSlotById(Guid courierSlotId)
+    {
+        var slot = await _deliveryRepository.GetCourierSlot(courierSlotId);
+        return new CourierSlotDto
+        {
+            Id = slot.Id,
+            CourierId = slot.CourierId,
+            TimeSlot = slot.TimeSlot,
+            IsReserved = slot.IsReserved,
+            Courier = new CourierDto { Id = slot.Courier.Id, Name = slot.Courier.Name }
+        };
+    }
 }

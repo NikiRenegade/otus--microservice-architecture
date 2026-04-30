@@ -9,4 +9,6 @@ public interface IDeliveryService
     Task<CourierDto> CreateCourier(CreateCourierDto dto);
     Task<CourierSlotDto> CreateSlot(CreateCourierSlotDto dto);
     Task<List<CourierSlotDto>> GetSlots();
+    Task<CourierSlotDto> GetCourierSlotById(Guid courierId);
+    
 }

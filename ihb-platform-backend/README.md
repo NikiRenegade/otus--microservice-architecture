@@ -118,27 +118,27 @@ helm repo add bitnami https://charts.bitnami.com/bitnami
 helm repo update
 
 # Установите PostgreSQL для UserService
-helm install users-postgres bitnami/postgresql \
+helm install users-db bitnami/postgresql \
   -f helm/db/usersdb-postgres-values.yaml
 
 # Установите PostgreSQL для OrderService
-helm install orders-postgres bitnami/postgresql \
+helm install orders-db bitnami/postgresql \
   -f helm/db/ordersdb-postgres-values.yaml
 
 # Установите PostgreSQL для BillingService
-helm install billing-postgres bitnami/postgresql \
+helm install billings-db bitnami/postgresql \
   -f helm/db/billingsdb-postgres-values.yaml
   
 # Установите PostgreSQL для DeliveryService
-helm install billing-postgres bitnami/postgresql \
-  -f helm/db/deliverysdb-postgres-values.yaml
+helm install deliveries-db bitnami/postgresql \
+  -f helm/db/deliveriesdb-postgres-values.yaml
   
 # Установите PostgreSQL для InventoryService
-helm install billing-postgres bitnami/postgresql \
-  -f helm/db/inventorysdb-postgres-values.yaml
+helm install inventories-db bitnami/postgresql \
+  -f helm/db/inventoriesdb-postgres-values.yaml
 
 # Установите PostgreSQL для NotificationService
-helm install notifications-postgres bitnami/postgresql \
+helm install notifications-db bitnami/postgresql \
   -f helm/db/notoficationsdb-postgres-values.yaml
 ```
 
@@ -146,25 +146,25 @@ helm install notifications-postgres bitnami/postgresql \
 
 ```bash
 # Разверните confiigmap для GatewayService
-kubectl apply -f helm/ihb-chart/templates/configMaps/gateway-configmap.yaml
+kubectl apply -f k8s/configMaps/gateway-configmap.yaml
 
 # Разверните secret (строка подключения к бд) для UserService
-kubectl apply -f helm/ihb-chart/templates/secrets/userservice-secret.yaml
+kubectl apply -f k8s/secrets/userservice-secret.yaml
 
 # Разверните secret (строка подключения к бд) для OrderService
-kubectl apply -f helm/ihb-chart/templates/secrets/orderservice-secret.yaml
+kubectl apply -f k8s/secrets/orderservice-secret.yaml
 
 # Разверните secret (строка подключения к бд) для BillingService
-kubectl apply -f helm/ihb-chart/templates/secrets/billingservice-secret.yaml
+kubectl apply -f k8s/secrets/billingservice-secret.yaml
 
 # Разверните secret (строка подключения к бд) для DeliveyService
-kubectl apply -f helm/ihb-chart/templates/secrets/deliveyservice-secret.yaml
+kubectl apply -f k8s/secrets/deliveryservice-secret.yaml
 
 # Разверните secret (строка подключения к бд) для InventoryService
-kubectl apply -f helm/ihb-chart/templates/secrets/inventoryservice-secret.yaml
+kubectl apply -f k8s/secrets/inventoryservice-secret.yaml
 
 # Разверните secret (строка подключения к бд) для NotificationService
-kubectl apply -f helm/ihb-chart/templates/secrets/notificationservice-secret.yaml
+kubectl apply -f k8s/secrets/notificationservice-secret.yaml
 ```
 
 ### Этап 5: Развёртывание микросервисов

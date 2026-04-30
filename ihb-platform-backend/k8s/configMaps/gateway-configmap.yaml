@@ -6,4 +6,6 @@ data:
   ReverseProxy__Clusters__user-cluster__Destinations__user_api__Address: "http://userservice:80"
   ReverseProxy__Clusters__order-cluster__Destinations__order_api__Address: "http://orderservice:80"
   ReverseProxy__Clusters__billing-cluster__Destinations__billing_api__Address: "http://billingservice:80"
+  ReverseProxy__Clusters__delivery-cluster__Destinations__delivery_api__Address: "http://deliveryservice:80"
+  ReverseProxy__Clusters__inventory-cluster__Destinations__inventory_api__Address: "http://inventoryservice:80"
   ReverseProxy__Clusters__notification-cluster__Destinations__notification_api__Address: "http://notificationservice:80"

@@ -1,6 +1,6 @@
 services:
   gatewayservice:
-    image: nikirenegade/ihb-gatewayservice:1.0.3
+    image: nikirenegade/ihb-gatewayservice:1.0.4
     port: 8000
 
   userservice:
@@ -17,15 +17,15 @@ services:
     migration:
       enabled: true
       image: nikirenegade/ihb-billingservice:1.0.0-migration
-      
+  
   deliveryservice:
-    image: nikirenegade/ihb-deliveryservice:1.0.0-api
+    image: nikirenegade/ihb-deliveryservice:1.0.1-api
     port: 8000
     rabbitmq: false
     migration:
       enabled: true
       image: nikirenegade/ihb-deliveryservice:1.0.0-migration
-      
+  
   inventoryservice:
     image: nikirenegade/ihb-inventoryservice:1.0.0-api
     port: 8000
@@ -33,9 +33,9 @@ services:
     migration:
       enabled: true
       image: nikirenegade/ihb-inventoryservice:1.0.0-migration
-      
+  
   orderservice:
-    image: nikirenegade/ihb-orderservice:1.0.4-api
+    image: nikirenegade/ihb-orderservice:1.0.6-api
     port: 8000
     rabbitmq: true
     migration:

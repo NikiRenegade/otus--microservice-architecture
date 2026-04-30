@@ -54,4 +54,10 @@ public class DeliveryController : ControllerBase
         var slots = await _deliveryService.GetSlots();
         return Ok(slots);
     }
+    [HttpGet("slot/{slotId}")]
+    public async Task<IActionResult> GetSlotById(Guid slotId)
+    {
+        var slot = await _deliveryService.GetCourierSlotById(slotId);
+        return Ok(slot);
+    }
 }

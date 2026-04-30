@@ -26,6 +26,7 @@ public class DeliveryRepository : IDeliveryRepository
     public Task<CourierSlot?> GetCourierSlot(Guid slotId)
     {
         return _context.CourierSlots
+            .Include(x => x.Courier)
             .FirstOrDefaultAsync(x=> x.Id == slotId);
     }
 
@@ -67,6 +68,6 @@ public class DeliveryRepository : IDeliveryRepository
 
     public async Task<List<CourierSlot>> GetAllSlots()
     {
-        return await _context.CourierSlots.ToListAsync();
+        return await _context.CourierSlots.Include(x => x.Courier).ToListAsync();
     }
 }

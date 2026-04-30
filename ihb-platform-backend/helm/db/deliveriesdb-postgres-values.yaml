@@ -1,7 +1,7 @@
 auth:
   username: postgres
   password: P@SSw0rd
-  database: deliveryssdb
+  database: deliveriesdb
 
 primary:
   persistence:
