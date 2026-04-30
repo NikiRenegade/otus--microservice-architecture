@@ -276,10 +276,12 @@ kubectl get svc
 **Маршруты**:
 
 | Путь              | Целевой сервис      |
-| ----------------- | ------------------- |
+|-------------------|---------------------|
 | `/user/*`         | UserService         |
 | `/order/*`        | OrderService        |
 | `/billing/*`      | BillingService      |
+| `/delivery/*`     | DeliveryService     |
+| `/inventory/*`    | InventoryService    |
 | `/notification/*` | NotificationService |
 
 **Технологии**: ASP.NET Core 9, YARP, JWT Bearer
