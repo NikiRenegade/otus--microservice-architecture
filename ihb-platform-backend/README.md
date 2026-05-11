@@ -110,6 +110,13 @@ kubectl apply -f k8s/rabbitmq/rabbitmq.yaml
 kubectl apply -f k8s/rabbitmq/rabbitmq-ingress.yaml
 ```
 
+#### 2.6 Установка Radis
+
+```bash
+# Установка Redis
+helm install redis bitnami/redis -f helm/redis-values.yaml
+```
+
 ### Этап 3: Развёртывание PostgreSQL для каждого сервиса
 
 ```bash
