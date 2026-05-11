@@ -1,0 +1,45 @@
+{
+  "name": "hw",
+  "values": [
+    {
+      "key": "baseUrl",
+      "value": "http://arch.homework",
+      "enabled": true
+    },
+    {
+      "key": "depositAmount",
+      "value": "5000",
+      "enabled": true
+    },
+    {
+      "key": "productId",
+      "value": "3fa85f64-5818-4562-b3fc-2a963a66afa2",
+      "enabled": true
+    },
+    {
+      "key": "quantity",
+      "value": "100",
+      "enabled": true
+    },
+    {
+      "key": "quantity1",
+      "value": "10",
+      "enabled": true
+    },
+    {
+      "key": "price1",
+      "value": "450",
+      "enabled": true
+    },
+    {
+      "key": "timeSlot",
+      "value": "2026-05-12T23:00:00",
+      "enabled": true
+    },
+    {
+      "key": "X-Request-ID",
+      "value": "019e163e-6749-7d92-baf8-b50ba4452219",
+      "enabled": true
+    }
+  ]
+}
