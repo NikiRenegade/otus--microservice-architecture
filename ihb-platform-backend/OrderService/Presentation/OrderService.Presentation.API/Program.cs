@@ -15,12 +15,20 @@ using Shared.RabbitMq;
 using Shared.RabbitMq.Interfaces;
 using Shared.ServiceToken;
 using Shared.ServiceToken.Interfaces;
+using StackExchange.Redis;
 
 var builder = WebApplication.CreateBuilder(args);
 
 var connectionString = builder.Configuration.GetConnectionString("orderdbconnection");
 builder.Services.AddDbContext<OrderDbContext>(options =>
     options.UseNpgsql(connectionString));
+
+// ===== Redis Configuration =====
+builder.Services.AddSingleton<IConnectionMultiplexer>(sp =>
+{
+    var redisConnection = builder.Configuration.GetConnectionString("redis");
+    return ConnectionMultiplexer.Connect(redisConnection);
+});
 
 // ===== JWT Authentication =====
 builder.Services.AddAuthentication(options =>
@@ -30,7 +38,7 @@ builder.Services.AddAuthentication(options =>
     })
     .AddJwtBearer(options =>
     {
-        options.MapInboundClaims = true; 
+        options.MapInboundClaims = true;
         options.TokenValidationParameters = new TokenValidationParameters
         {
             ValidateIssuer = true,
@@ -55,7 +63,7 @@ builder.Services.AddControllers();
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "UserService API", Version = "v1" });
-    
+
     c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         Name = "Authorization",
@@ -71,10 +79,10 @@ builder.Services.AddSwaggerGen(c =>
         {
             new OpenApiSecurityScheme
             {
-                Reference = new OpenApiReference 
-                { 
-                    Type = ReferenceType.SecurityScheme, 
-                    Id = "Bearer" 
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
                 }
             },
             Array.Empty<string>()
@@ -95,6 +103,7 @@ builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 builder.Services.AddScoped<IOrderService, OrderService.Application.Services.OrderService>();
 builder.Services.AddScoped<IBillingClient, BillingClient>();
 builder.Services.AddScoped<IServiceTokenGenerator, ServiceTokenGenerator>();
+builder.Services.AddScoped<IIdempotencyService, IdempotencyService>();
 
 // RabbitMQ
 var rabbitConfig = builder.Configuration.GetSection("RabbitMQ");

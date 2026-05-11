@@ -14,9 +14,15 @@ public class OrderCreateDto
     /// Коллекция товаров для включения в заказ.
     /// </summary>
     public List<OrderItemDto> Items { get; set; } = new();
-    
+
     /// <summary>
     /// Время к которому необходимо доставить заказ
     /// </summary>
     public DateTime TimeSlot { get; set; }
+
+    /// <summary>
+    /// Ключ идемпотентности для обеспечения идемпотентности операции создания заказа.
+    /// Хранится в Redis, автоматически удаляется через 24 часа.
+    /// </summary>
+    public string? IdempotencyKey { get; set; }
 }

@@ -14,23 +14,34 @@ public class OrderService : IOrderService
     private readonly IInventoryClient _inventory;
     private readonly IDeliveryClient _delivery;
     private readonly IOrderEventPublisher _orderEventPublisher;
+    private readonly IIdempotencyService _idempotencyService;
 
     public OrderService(
         IOrderRepository orderRepository,
         IBillingClient billing,
         IInventoryClient inventory,
         IDeliveryClient delivery,
-        IOrderEventPublisher orderEventPublisher)
+        IOrderEventPublisher orderEventPublisher,
+        IIdempotencyService idempotencyService)
     {
         _orderRepository = orderRepository;
         _billing = billing;
         _inventory = inventory;
         _delivery = delivery;
         _orderEventPublisher = orderEventPublisher;
+        _idempotencyService = idempotencyService;
     }
 
     public async Task<OrderCreateResponseDto> CreateOrder(OrderCreateDto orderCreateDto)
     {
+        if (!string.IsNullOrEmpty(orderCreateDto.IdempotencyKey))
+        {
+            var cachedResult = await _idempotencyService.GetAsync(orderCreateDto.IdempotencyKey);
+            if (cachedResult != null)
+            {
+                return cachedResult;
+            }
+        }
         OrderCreateResponseDto orderCreateResponseDto;
         var order = new Order
         {
@@ -56,16 +67,20 @@ public class OrderService : IOrderService
         if (!reserved)
         {
             await Fail(order, "Нет товара на складе");
-            return Map(order);
+            orderCreateResponseDto = Map(order);
+            await CacheSetAsync(orderCreateDto.IdempotencyKey, orderCreateResponseDto);
+            return orderCreateResponseDto;
         }
-        
+
         var deliveryReserved = await _delivery.Reserve(order.Id, orderCreateDto.UserId, orderCreateDto.TimeSlot);
 
         if (!deliveryReserved)
         {
-            await _inventory.Release(order.Id,  orderCreateDto.UserId);
+            await _inventory.Release(order.Id, orderCreateDto.UserId);
             await Fail(order, "Нет доступного курьера");
-            return Map(order);
+            orderCreateResponseDto = Map(order);
+            await CacheSetAsync(orderCreateDto.IdempotencyKey, orderCreateResponseDto);
+            return orderCreateResponseDto;
         }
 
         var payment = await _billing.Withdraw(order.UserId, order.Price);
@@ -86,6 +101,7 @@ public class OrderService : IOrderService
                 UserId = order.UserId,
                 Status = order.Status.ToString(),
             };
+            await CacheSetAsync(orderCreateDto.IdempotencyKey, orderCreateResponseDto);
             return orderCreateResponseDto;
         }
 
@@ -107,6 +123,7 @@ public class OrderService : IOrderService
             Status = order.Status.ToString(),
         };
 
+        await CacheSetAsync(orderCreateDto.IdempotencyKey, orderCreateResponseDto);
         return orderCreateResponseDto;
     }
 
@@ -124,7 +141,7 @@ public class OrderService : IOrderService
             Text = $"Заказ {order.Id} создать не удалось. " + message
         });
     }
-    
+
     private OrderCreateResponseDto Map(Order order)
     {
         return new OrderCreateResponseDto
@@ -136,5 +153,13 @@ public class OrderService : IOrderService
             UserId = order.UserId,
             Status = order.Status.ToString()
         };
+    }
+    
+    private async Task CacheSetAsync(string? idempotencyKey, OrderCreateResponseDto response)
+    {
+        if (!string.IsNullOrEmpty(idempotencyKey))
+        {
+            await _idempotencyService.SetAsync(idempotencyKey, response);
+        }
     }
 }

@@ -25,16 +25,22 @@ public class OrderController : ControllerBase
 
         if (userIdClaim == null)
             return Unauthorized();
+        
+        Request.Headers.TryGetValue("X-Request-ID", out var requestIdValue);
+        var requestId = requestIdValue.ToString();
+        if (string.IsNullOrWhiteSpace(requestId))
+            return BadRequest("X-Request-ID is required");
 
         var orderCreateDto = new OrderCreateDto
         {
             UserId = Guid.Parse(userIdClaim),
             Items = orderItems.ToList(),
-            TimeSlot = timeSlot
+            TimeSlot = timeSlot,
+            IdempotencyKey = requestId
         };
 
         var order = await _orderService.CreateOrder(orderCreateDto);
 
-        return Ok(order);
+        return Ok(new {order, requestId});
     }
 }
