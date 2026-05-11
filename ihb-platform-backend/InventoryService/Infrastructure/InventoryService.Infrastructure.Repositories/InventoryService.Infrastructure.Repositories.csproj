@@ -1,0 +1,15 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Domain\InventoryService.Domain\InventoryService.Domain.csproj" />
+    <ProjectReference Include="..\..\Domain\InventoryService.Domain.Interfaces\InventoryService.Domain.Interfaces.csproj" />
+    <ProjectReference Include="..\InventoryService.Infrastructure.EntityFramework\InventoryService.Infrastructure.EntityFramework.csproj" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+</Project>

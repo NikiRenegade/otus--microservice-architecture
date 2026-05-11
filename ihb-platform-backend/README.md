@@ -7,9 +7,11 @@
 ```
 ihb-platform-backend/
 ├── UserService/                    # Микросервис управления пользователями
-├── BillingService/                 # Микросервис управления биллингом
+├── DeliveryService/                 # Микросервис управления биллингом
+├── InventoryService/                 # Микросервис управления доставкой
+├── BillingService/                 # Микросервис управления складом
 ├── OrderService/                   # Микросервис управления заказами
-├── NotificationService/             # Микросервис отправки уведомлений
+├── NotificationService/            # Микросервис отправки уведомлений
 ├── GatewayService/                 # API Gateway (точка входа)
 ├── Shared/                         # Общие библиотеки
 ├── helm/                           # Helm чарты для развёртывания
@@ -116,19 +118,27 @@ helm repo add bitnami https://charts.bitnami.com/bitnami
 helm repo update
 
 # Установите PostgreSQL для UserService
-helm install users-postgres bitnami/postgresql \
+helm install users-db bitnami/postgresql \
   -f helm/db/usersdb-postgres-values.yaml
 
 # Установите PostgreSQL для OrderService
-helm install orders-postgres bitnami/postgresql \
+helm install orders-db bitnami/postgresql \
   -f helm/db/ordersdb-postgres-values.yaml
 
 # Установите PostgreSQL для BillingService
-helm install billing-postgres bitnami/postgresql \
+helm install billings-db bitnami/postgresql \
   -f helm/db/billingsdb-postgres-values.yaml
+  
+# Установите PostgreSQL для DeliveryService
+helm install deliveries-db bitnami/postgresql \
+  -f helm/db/deliveriesdb-postgres-values.yaml
+  
+# Установите PostgreSQL для InventoryService
+helm install inventories-db bitnami/postgresql \
+  -f helm/db/inventoriesdb-postgres-values.yaml
 
 # Установите PostgreSQL для NotificationService
-helm install notifications-postgres bitnami/postgresql \
+helm install notifications-db bitnami/postgresql \
   -f helm/db/notoficationsdb-postgres-values.yaml
 ```
 
@@ -136,17 +146,25 @@ helm install notifications-postgres bitnami/postgresql \
 
 ```bash
 # Разверните confiigmap для GatewayService
-kubectl apply -f helm/ihb-chart/templates/configMaps/gateway-configmap.yaml
-
+kubectl apply -f k8s/configMaps/gateway-configmap.yaml
 
 # Разверните secret (строка подключения к бд) для UserService
-kubectl apply -f helm/ihb-chart/templates/secrets/userservice-secret.yaml
+kubectl apply -f k8s/secrets/userservice-secret.yaml
 
 # Разверните secret (строка подключения к бд) для OrderService
-kubectl apply -f helm/ihb-chart/templates/secrets/orderservice-secret.yaml
+kubectl apply -f k8s/secrets/orderservice-secret.yaml
 
 # Разверните secret (строка подключения к бд) для BillingService
-kubectl apply -f helm/ihb-chart/templates/secrets/billingservice-secret.yaml
+kubectl apply -f k8s/secrets/billingservice-secret.yaml
+
+# Разверните secret (строка подключения к бд) для DeliveyService
+kubectl apply -f k8s/secrets/deliveryservice-secret.yaml
+
+# Разверните secret (строка подключения к бд) для InventoryService
+kubectl apply -f k8s/secrets/inventoryservice-secret.yaml
+
+# Разверните secret (строка подключения к бд) для NotificationService
+kubectl apply -f k8s/secrets/notificationservice-secret.yaml
 ```
 
 ### Этап 5: Развёртывание микросервисов
@@ -201,6 +219,27 @@ kubectl get svc
 
 **Технологии**: ASP.NET Core 9, Entity Framework Core, PostgreSQL, RabbitMQ
 
+### DeliveryService
+
+**Описание**: Управление доставкой
+
+**Функционал**:
+
+- Создание и управление слотами доставки
+
+**Технологии**: ASP.NET Core 9, Entity Framework Core, PostgreSQL
+
+### InventoryService
+
+**Описание**: Управление товаром на складе
+
+**Функционал**:
+
+- Создание и управление товарами на складе
+
+**Технологии**: ASP.NET Core 9, Entity Framework Core, PostgreSQL
+
+
 ### OrderService
 
 **Описание**: Управление заказами
@@ -237,10 +276,12 @@ kubectl get svc
 **Маршруты**:
 
 | Путь              | Целевой сервис      |
-| ----------------- | ------------------- |
+|-------------------|---------------------|
 | `/user/*`         | UserService         |
 | `/order/*`        | OrderService        |
 | `/billing/*`      | BillingService      |
+| `/delivery/*`     | DeliveryService     |
+| `/inventory/*`    | InventoryService    |
 | `/notification/*` | NotificationService |
 
 **Технологии**: ASP.NET Core 9, YARP, JWT Bearer

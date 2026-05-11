@@ -4,5 +4,5 @@ description: Microservices platform for IHB system
 
 type: application
 
-version: 0.2.0
-appVersion: "2026.04.01"
+version: 0.3.0
+appVersion: "2026.04.28"

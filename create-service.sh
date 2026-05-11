@@ -2,11 +2,11 @@
 set -e
 
 # ========= CONFIG =========
-SERVICE_NAME="NotificationService"
+SERVICE_NAME="InventoryService"
 DOTNET_VERSION="net9.0"
 SOLUTION_NAME="ihb-platform-backend"
 # ==========================
-
+cd "$SOLUTION_NAME"
 echo "Adding service: $SERVICE_NAME"
 
 # ================= SERVICE FOLDER =================
@@ -104,8 +104,8 @@ dotnet sln "$SOLUTION_NAME.sln" add "$SERVICE_NAME/Presentation/$SERVICE_NAME.Pr
 
 # ================= REFERENCES =================
 
-dotnet add "$SERVICE_NAME/Domain/$SERVICE_NAME.Infrastructure" reference \
-  "$SERVICE_NAME/Domain/$SERVICE_NAME.Domain.Interfaces"
+dotnet add "$SERVICE_NAME/Domain/$SERVICE_NAME.Domain.Interfaces" reference \
+  "$SERVICE_NAME/Domain/$SERVICE_NAME.Domain"
 
 dotnet add "$SERVICE_NAME/Application/$SERVICE_NAME.Application" reference \
   "$SERVICE_NAME/Domain/$SERVICE_NAME.Domain" \
