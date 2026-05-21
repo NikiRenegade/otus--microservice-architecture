@@ -29,4 +29,5 @@ public class UserDto
     /// Фамилия пользователя.
     /// </summary>
     public string LastName { get; set; }
+    public string Role { get; set; }
 }

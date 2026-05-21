@@ -13,5 +13,6 @@ public record UserRegisterDto(
     string Password,
     string UserName,
     string FirstName,
-    string LastName
+    string LastName,
+    string role
 );

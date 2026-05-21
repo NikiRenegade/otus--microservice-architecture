@@ -33,21 +33,21 @@ public class DeliveryController : ControllerBase
         await _deliveryService.Cancel(orderId);
         return Ok();
     }
-    
+    [Authorize(Roles = "Admin")]
     [HttpPost("courier")]
     public async Task<IActionResult> CreateCourier(CreateCourierDto dto)
     {
         var courier = await _deliveryService.CreateCourier(dto);
         return Ok(courier);
     }
-
+    [Authorize(Roles = "Admin")]
     [HttpPost("slot")]
     public async Task<IActionResult> CreateSlot(CreateCourierSlotDto dto)
     {
         var slot = await _deliveryService.CreateSlot(dto);
         return Ok(slot);
     }
-
+    
     [HttpGet("slots")]
     public async Task<IActionResult> GetSlots()
     {

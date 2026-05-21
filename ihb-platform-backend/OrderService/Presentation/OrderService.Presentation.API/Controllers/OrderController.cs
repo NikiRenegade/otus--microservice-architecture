@@ -18,6 +18,7 @@ public class OrderController : ControllerBase
         _orderService = orderService;
     }
 
+    [Authorize]
     [HttpPost]
     public async Task<IActionResult> Create(IList<OrderItemDto> orderItems, DateTime timeSlot)
     {

@@ -7,5 +7,5 @@ namespace UserService.Domain.Interfaces.Services;
 /// </summary>
 public interface IJwtTokenService
 {
-    string GenerateJwtToken(User user);
+    string GenerateJwtToken(User user, string role);
 }

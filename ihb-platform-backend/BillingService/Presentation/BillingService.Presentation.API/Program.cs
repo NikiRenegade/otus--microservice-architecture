@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using OpenTelemetry.Metrics;
 using RabbitMQ.Client;
 using Shared.RabbitMq;
 using Shared.RabbitMq.Interfaces;
@@ -18,6 +19,15 @@ var builder = WebApplication.CreateBuilder(args);
 var connectionString = builder.Configuration.GetConnectionString("billingdbconnection");
 builder.Services.AddDbContext<BillingDbContext>(options =>
     options.UseNpgsql(connectionString));
+
+builder.Services.AddOpenTelemetry()
+    .WithMetrics(metrics =>
+    {
+        metrics
+            .AddAspNetCoreInstrumentation()
+            .AddRuntimeInstrumentation()
+            .AddPrometheusExporter();
+    });
 
 // ===== JWT Authentication =====
 builder.Services.AddAuthentication(options =>

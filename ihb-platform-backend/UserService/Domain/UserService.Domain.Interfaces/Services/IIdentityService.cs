@@ -8,5 +8,6 @@ namespace UserService.Domain.Interfaces.Services;
 public interface IIdentityService
 {
     Task<bool> SignInAsync(User user, string password);
-    Task<User?> RegisterAsync(User user, string password);
+    Task<User?> RegisterAsync(User user, string password, string role);
+    Task<string?> GetUserRoleAsync(User user);
 }

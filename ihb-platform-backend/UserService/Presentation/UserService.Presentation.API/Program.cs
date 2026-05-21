@@ -14,6 +14,7 @@ using RabbitMQ.Client;
 using Shared.RabbitMq;
 using Shared.RabbitMq.Interfaces;
 using UserService.Domain.Interfaces.Publishers;
+using UserService.Infrastructure.EntityFramework;
 using UserService.Infrastructure.Messaging;
 using UserService.Infrastructure.Services;
 
@@ -26,7 +27,7 @@ builder.Services.AddDbContext<UserDbContext>(options =>
 // ===== Identity =====
 builder.Services.AddDataProtection();
 builder.Services
-    .AddIdentityCore<User>(options =>
+    .AddIdentity<User, IdentityRole<Guid>>(options =>
     {
         options.User.RequireUniqueEmail = true;
         options.Password.RequireDigit = false;
@@ -38,6 +39,8 @@ builder.Services
     .AddSignInManager()
     .AddDefaultTokenProviders();
 
+
+// ===== Open Telemetry =====
 builder.Services.AddOpenTelemetry()
     .WithMetrics(metrics =>
     {
@@ -147,6 +150,12 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 
 
 var app = builder.Build();
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+
+    await RoleSeeder.SeedRolesAsync(services);
+}
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

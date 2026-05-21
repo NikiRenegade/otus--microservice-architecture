@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using UserService.Domain.Entities;
@@ -5,7 +6,7 @@ using UserService.Infrastructure.EntityFramework.Configurations;
 
 namespace UserService.Infrastructure.EntityFramework.Contexts
 {
-    public class UserDbContext : IdentityUserContext<User, Guid>
+    public class UserDbContext : IdentityDbContext<User, IdentityRole<Guid>, Guid>
     {
         /// <summary>
         /// Контекст базы данных для сущности <see cref="User"/>.

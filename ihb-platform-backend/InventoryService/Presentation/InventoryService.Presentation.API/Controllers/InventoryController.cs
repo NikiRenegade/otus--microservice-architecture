@@ -35,13 +35,14 @@ public class InventoryController : ControllerBase
         return Ok();
     }
     
+    [Authorize(Roles = "Admin")]
     [HttpPost]
     public async Task<IActionResult> AddStock(AddProductStockDto dto)
     {
         var productStock = await _inventoryService.AddProductStock(dto);
         return Ok(productStock);
     }
-
+    [Authorize]
     [HttpGet("{productId}")]
     public async Task<IActionResult> GetProductStock(Guid productId)
     {
@@ -52,6 +53,7 @@ public class InventoryController : ControllerBase
 
         return Ok(productStock);
     }
+    [Authorize]
     [HttpGet]
     public async Task<IActionResult> GetAllProductStocks()
     {
