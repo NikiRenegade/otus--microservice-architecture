@@ -17,6 +17,7 @@ using Shared.RabbitMq;
 using Shared.RabbitMq.Interfaces;
 using Shared.ServiceToken;
 using Shared.ServiceToken.Interfaces;
+using OpenTelemetry.Resources;
 
 
 
@@ -38,10 +39,16 @@ builder.Services.AddOpenTelemetry()
     .WithMetrics(metrics =>
     {
         metrics
+            .SetResourceBuilder(OpenTelemetry.Resources.ResourceBuilder.CreateDefault().AddService("OrderService"))
             .AddAspNetCoreInstrumentation()
+            .AddHttpClientInstrumentation()
             .AddRuntimeInstrumentation()
             .AddPrometheusExporter();
     });
+
+builder.Services.AddHealthChecks()
+    .AddNpgSql(connectionString)
+    .AddRedis(builder.Configuration.GetConnectionString("redis"));
 
 // ===== JWT Authentication =====
 builder.Services.AddAuthentication(options =>
@@ -163,6 +170,7 @@ builder.Services.AddHttpClient<IInventoryClient, InventoryClient>((sp, client) =
 var app = builder.Build();
 
 app.MapPrometheusScrapingEndpoint();
+app.MapHealthChecks("/health");
 
 app.UseSwagger();
 app.UseSwaggerUI();
