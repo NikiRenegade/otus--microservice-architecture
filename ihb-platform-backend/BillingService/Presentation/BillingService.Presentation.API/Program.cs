@@ -9,9 +9,11 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using OpenTelemetry.Metrics;
 using RabbitMQ.Client;
 using Shared.RabbitMq;
 using Shared.RabbitMq.Interfaces;
+using OpenTelemetry.Resources;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,6 +21,17 @@ var connectionString = builder.Configuration.GetConnectionString("billingdbconne
 builder.Services.AddDbContext<BillingDbContext>(options =>
     options.UseNpgsql(connectionString));
 
+builder.Services.AddOpenTelemetry()
+    .WithMetrics(metrics =>
+    {
+        metrics
+            .SetResourceBuilder(OpenTelemetry.Resources.ResourceBuilder.CreateDefault().AddService("BillingService"))
+            .AddAspNetCoreInstrumentation()
+            .AddHttpClientInstrumentation()
+            .AddRuntimeInstrumentation()
+            .AddPrometheusExporter();
+    });
+builder.Services.AddHealthChecks().AddNpgSql(connectionString);
 // ===== JWT Authentication =====
 builder.Services.AddAuthentication(options =>
     {
@@ -27,7 +40,7 @@ builder.Services.AddAuthentication(options =>
     })
     .AddJwtBearer(options =>
     {
-        options.MapInboundClaims = true; 
+        options.MapInboundClaims = true;
         options.TokenValidationParameters = new TokenValidationParameters
         {
             ValidateIssuer = true,
@@ -57,7 +70,7 @@ builder.Services.AddControllers();
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "BillingService API", Version = "v1" });
-    
+
     c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         Name = "Authorization",
@@ -73,10 +86,10 @@ builder.Services.AddSwaggerGen(c =>
         {
             new OpenApiSecurityScheme
             {
-                Reference = new OpenApiReference 
-                { 
-                    Type = ReferenceType.SecurityScheme, 
-                    Id = "Bearer" 
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
                 }
             },
             Array.Empty<string>()
@@ -122,7 +135,8 @@ builder.Services.AddScoped<IRabbitMqConsumer, RabbitMqUserEventConsumer>();
 builder.Services.AddHostedService<RabbitMqConsumersBackgroundService>();
 
 var app = builder.Build();
-
+app.MapPrometheusScrapingEndpoint();
+app.MapHealthChecks("/health");
 app.UseSwagger();
 app.UseSwaggerUI();
 

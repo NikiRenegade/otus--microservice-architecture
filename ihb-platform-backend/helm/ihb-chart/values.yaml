@@ -4,14 +4,15 @@ services:
     port: 8000
 
   userservice:
-    image: nikirenegade/ihb-userservice:1.0.5-api
+    image: nikirenegade/ihb-userservice:1.0.7-api
     port: 8000
     rabbitmq: true
     migration:
       enabled: true
-      image: nikirenegade/ihb-userservice:1.0.0-migration
+      image: nikirenegade/ihb-userservice:1.0.2-migration
+  
   billingservice:
-    image: nikirenegade/ihb-billingservice:1.0.0-api
+    image: nikirenegade/ihb-billingservice:1.0.2-api
     port: 8000
     rabbitmq: true
     migration:
@@ -19,7 +20,7 @@ services:
       image: nikirenegade/ihb-billingservice:1.0.0-migration
   
   deliveryservice:
-    image: nikirenegade/ihb-deliveryservice:1.0.1-api
+    image: nikirenegade/ihb-deliveryservice:1.0.3-api
     port: 8000
     rabbitmq: false
     migration:
@@ -27,7 +28,7 @@ services:
       image: nikirenegade/ihb-deliveryservice:1.0.0-migration
   
   inventoryservice:
-    image: nikirenegade/ihb-inventoryservice:1.0.0-api
+    image: nikirenegade/ihb-inventoryservice:1.0.2-api
     port: 8000
     rabbitmq: false
     migration:
@@ -35,7 +36,7 @@ services:
       image: nikirenegade/ihb-inventoryservice:1.0.0-migration
   
   orderservice:
-    image: nikirenegade/ihb-orderservice:1.0.10-api
+    image: nikirenegade/ihb-orderservice:1.0.12-api
     port: 8000
     rabbitmq: true
     migration:
@@ -43,7 +44,7 @@ services:
       image: nikirenegade/ihb-orderservice:1.0.0-migration
 
   notificationservice:
-    image: nikirenegade/ihb-notificationservice:1.0.0-api
+    image: nikirenegade/ihb-notificationservice:1.0.2-api
     port: 8000
     rabbitmq: true
     migration:

@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using UserService.Domain.DTOs;
 using UserService.Domain.Events;
@@ -33,6 +34,7 @@ public class UserController : ControllerBase
     /// Возвращает всех пользователей.
     /// </summary>
     /// <returns>Список пользователей в виде DTO.</returns>
+    [Authorize(Roles = "Admin")]
     [HttpGet]
     public async Task<ActionResult<IList<UserDto>>> GetAll()
     {
@@ -52,6 +54,7 @@ public class UserController : ControllerBase
     /// </summary>
     /// <param name="id">Идентификатор пользователя.</param>
     /// <returns>Пользователь в виде DTO или 404.</returns>
+    [Authorize(Roles = "Admin")]
     [HttpGet("{id}")]
     public async Task<ActionResult<UserDto>> GetById(Guid id)
     {
@@ -75,6 +78,7 @@ public class UserController : ControllerBase
     /// </summary>
     /// <param name="email">Email пользователя.</param>
     /// <returns>Пользователь в виде DTO или 404.</returns>
+    [Authorize(Roles = "Admin")]
     [HttpGet("email/{email}")]
     public async Task<ActionResult<UserDto>> GetByEmail(string email)
     {
@@ -134,6 +138,7 @@ public class UserController : ControllerBase
     /// <param name="id">Идентификатор обновляемого пользователя.</param>
     /// <param name="request">DTO с новыми данными.</param>
     /// <returns>HTTP 200 с данными пользователе при успехе, 404 если пользователь не найден.</returns>
+    [Authorize(Roles = "Admin")]
     [HttpPut("{id}")]
     public async Task<ActionResult<UserDto>> Update(Guid id, [FromBody] UserUpdateDto request)
     {
@@ -163,6 +168,7 @@ public class UserController : ControllerBase
     /// </summary>
     /// <param name="id">Идентификатор пользователя.</param>
     /// <returns>HTTP 200 при успехе, 404 если не найден.</returns>
+    [Authorize(Roles = "Admin")]
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(Guid id)
     {

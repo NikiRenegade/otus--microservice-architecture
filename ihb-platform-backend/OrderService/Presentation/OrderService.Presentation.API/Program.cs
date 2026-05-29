@@ -3,6 +3,9 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using OpenTelemetry.Metrics;
+using RabbitMQ.Client;
+using StackExchange.Redis;
 using OrderService.Domain.Interfaces.Publishers;
 using OrderService.Domain.Interfaces.Repositories;
 using OrderService.Domain.Interfaces.Services;
@@ -10,12 +13,13 @@ using OrderService.Infrastructure.EntityFramework.Contexts;
 using OrderService.Infrastructure.Messaging;
 using OrderService.Infrastructure.Repositories;
 using OrderService.Infrastructure.Services;
-using RabbitMQ.Client;
 using Shared.RabbitMq;
 using Shared.RabbitMq.Interfaces;
 using Shared.ServiceToken;
 using Shared.ServiceToken.Interfaces;
-using StackExchange.Redis;
+using OpenTelemetry.Resources;
+
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -29,6 +33,22 @@ builder.Services.AddSingleton<IConnectionMultiplexer>(sp =>
     var redisConnection = builder.Configuration.GetConnectionString("redis");
     return ConnectionMultiplexer.Connect(redisConnection);
 });
+
+// ===== Open Telemetry =====
+builder.Services.AddOpenTelemetry()
+    .WithMetrics(metrics =>
+    {
+        metrics
+            .SetResourceBuilder(OpenTelemetry.Resources.ResourceBuilder.CreateDefault().AddService("OrderService"))
+            .AddAspNetCoreInstrumentation()
+            .AddHttpClientInstrumentation()
+            .AddRuntimeInstrumentation()
+            .AddPrometheusExporter();
+    });
+
+builder.Services.AddHealthChecks()
+    .AddNpgSql(connectionString)
+    .AddRedis(builder.Configuration.GetConnectionString("redis"));
 
 // ===== JWT Authentication =====
 builder.Services.AddAuthentication(options =>
@@ -62,7 +82,7 @@ builder.Services.AddAuthorization();
 builder.Services.AddControllers();
 builder.Services.AddSwaggerGen(c =>
 {
-    c.SwaggerDoc("v1", new OpenApiInfo { Title = "UserService API", Version = "v1" });
+    c.SwaggerDoc("v1", new OpenApiInfo { Title = "OrderService API", Version = "v1" });
 
     c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
@@ -148,6 +168,9 @@ builder.Services.AddHttpClient<IInventoryClient, InventoryClient>((sp, client) =
 });
 
 var app = builder.Build();
+
+app.MapPrometheusScrapingEndpoint();
+app.MapHealthChecks("/health");
 
 app.UseSwagger();
 app.UseSwaggerUI();

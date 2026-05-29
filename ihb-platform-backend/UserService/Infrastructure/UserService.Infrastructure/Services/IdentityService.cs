@@ -38,11 +38,26 @@ public class IdentityService : IIdentityService
     /// <param name="user">Сущность пользователя.</param>
     /// <param name="password">Пароль в открытом виде.</param>
     /// <returns>Созданный пользователь или <c>null</c>, если создание не удалось.</returns>
-    public async Task<User?> RegisterAsync(User user, string password)
+    public async Task<User?> RegisterAsync(User user, string password, string role)
     {
-        var result = await _userManager.CreateAsync(user, password);
-        if (result.Succeeded)
-            return _userManager.Users.FirstOrDefault(u => u.Email == user.Email);
-        return null;
+        var createResult = await _userManager.CreateAsync(user, password);
+        if (!createResult.Succeeded)
+            return null;
+
+        var roleResult = await _userManager.AddToRoleAsync(user, role);
+
+        if (!roleResult.Succeeded)
+            return null;
+        return _userManager.Users.FirstOrDefault(u => u.Email == user.Email);
+    }
+
+    public async Task<string?> GetUserRoleAsync(User user)
+    {
+        var roles = await _userManager.GetRolesAsync(user);
+        if (roles.Count == 0)
+        {
+            return string.Empty;
+        }
+        return roles.FirstOrDefault();
     }
 }

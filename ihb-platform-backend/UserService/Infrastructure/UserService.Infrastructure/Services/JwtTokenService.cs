@@ -18,14 +18,15 @@ public class JwtTokenService : IJwtTokenService
     {
         _configuration = configuration;
     }
-    public string GenerateJwtToken(User user)
+    public string GenerateJwtToken(User user,  string role)
     {
         var claims = new[]
         {
             new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
             new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
             new Claim(ClaimTypes.Name, user.Email),
-            new Claim("email", user.Email)
+            new Claim("email", user.Email),
+            new Claim(ClaimTypes.Role, role) 
         };
 
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));

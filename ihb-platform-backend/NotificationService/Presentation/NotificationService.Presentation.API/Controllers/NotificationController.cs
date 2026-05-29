@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NotificationService.Domain.DTOs;
 using NotificationService.Domain.Interfaces.Services;
@@ -19,6 +20,8 @@ public class NotificationController : ControllerBase
     /// Возвращает все уведомления.
     /// </summary>
     /// <returns>Список уведомлений в виде DTO.</returns>
+    
+    [Authorize(Roles = "Admin")]
     [HttpGet]
     public async Task<ActionResult<IList<NotificationDto>>> GetAll()
     {

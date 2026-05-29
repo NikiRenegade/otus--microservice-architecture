@@ -73,7 +73,7 @@ public class UserService : IUserService
 
         var user = dto.ToEntity();
 
-        var created = await _identityService.RegisterAsync(user, dto.Password);
+        var created = await _identityService.RegisterAsync(user, dto.Password, dto.role);
         if (created == null)
             throw new InvalidOperationException("Не удалось создать пользователя.");
         return created.ToUserDto();
@@ -109,11 +109,12 @@ public class UserService : IUserService
     {
         var user = await _userRepository.GetByEmailAsync(dto.Email);
         var result = await _identityService.SignInAsync(user, dto.Password);
+        var role = await _identityService.GetUserRoleAsync(user);
         if (result == false)
         {
             return null;
         }
-        var accessToken = _jwtTokenService.GenerateJwtToken(user);
+        var accessToken = _jwtTokenService.GenerateJwtToken(user, role);
         return new UserAuthSuccess
         {
             UserDto = user.ToUserDto(),

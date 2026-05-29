@@ -110,7 +110,7 @@ kubectl apply -f k8s/rabbitmq/rabbitmq.yaml
 kubectl apply -f k8s/rabbitmq/rabbitmq-ingress.yaml
 ```
 
-#### 2.6 Установка Radis
+#### 2.6 Установка Redis
 
 ```bash
 # Установка Redis
